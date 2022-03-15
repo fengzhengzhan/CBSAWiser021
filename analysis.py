@@ -12,21 +12,11 @@ import datetime
 import math
 
 '''
-建议使用python3
-安装依赖包  pip3 install -r requirements.txt
+suggest to use python3
+install package ->  pip3 install -r requirements.txt
 '''
 
-
-'''
-普通函数：首字母小写  驼峰  exampleFunction
-全局变量名：大写字母  _分割  EXAMPLE_VARIABLE
-普通变量： 小写字母 _分割  example_variable_common
-文件名：特殊情况外短名字全小写(变量名)
-文件夹：大写字母开头(类名)
-'''
-
-# 大写所有的全局变量
-DEBUG = False  # 取前100条保存成test.xlsx
+DEBUG = False
 DATA_PATH = "data"
 ANALYSIS_PATH = "analysis"
 DATA_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edited.xlsx"
@@ -34,25 +24,25 @@ DATA_SAVE_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edite
 ANALYSIS_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "analysis_nkey_array.pkl"
 
 ARRAYID = {'docid':0, 'comment_count':1, 'like_count':2, 'dislike_count':3, 'love_count':4, 'haha_count':5, 'wow_count':6, 'angry_count':7, 'sad_count':8, 'share_count':9, 'view_count':10, 'negativeemo_count':11, 'positiveemo_count':12, 'influence_count':13, 'headline':14, 'author*':15, 'pubname':16, 'pubdate':17, 'region':18, 'fans_count':19, 'author_type':20, 'content':21}  # 字典 便于访问字段对应的列
-TIME = lambda : time.strftime('%H:%M:%S', time.localtime(time.time()))  # 匿名函数 用于返回时间
+TIME = lambda :time.strftime('%H:%M:%S',time.localtime(time.time()))  # Anonymous function to return the time
 file_time = str(time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())))
 
-REMOVE_WORDS = ['https', 'com', 'did', 'http', '01', 'bit', '', 'www', '10', '11', '12', '14', '23', '...', 'E6%', 'D100', 'was', '精液', 'light', 'small', '口罩', '武漢', '確診', '醫生', '香港', '抗疫', '肺炎', '中國', '疫情', '防疫', '我們', '港人', '醫院', '美國', '檢測', '新冠', '疫苗', '接種', 'face', '英國', 'Shared', '醫護', 'Hong', '病毒', '隔離', '台灣', '你們', '一個', '個案', '抽獎', '政府', '國家']  # 剔除词汇
-INTERESTING_WORDS = ['特朗普', '抽獎']  # 关键词提取对应的内容  (\\代表空白字符)
+REMOVE_WORDS = ['https', 'com', 'did', 'http', '01', 'bit', '', 'www', '10', '11', '12', '14', '23', '...', 'E6%', 'D100', 'was', '精液', 'light', 'small', '武漢', '確診', '醫生', '香港', '抗疫', '肺炎', '中國', '疫情', '防疫', '我們', '港人', '醫院', '美國', '檢測', '新冠', '疫苗', '接種', 'face', '英國', 'Shared', 'Hong', '病毒', '台灣', '你們', '一個', '個案', '點新聞', '甚麼', '新聞', '他們', '大學生', '政府', '國家', '蘋果', '英文', ' 最佳', '這句', '因為', '毛記', 'dotdotnews']  # 剔除词汇
+INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""
 
-NKEY = 3  # 提取关键词个数
-# 时间分析
+NKEY = 3  # the number of keywords to be extracted
+# Analysis by time
 TIME_MODE = "time_mode"
-TIME_INTERVAL = 6  # 天数间隔
-EACH_LINE_KEYWORDS = 1  # 每一条数据选取几个关键词  范围:1-3
-EACH_WEEKEND_N = 12  # 每周提取多少个关键词
-ENABLE_TIME_WEIGHT = True  # 是否允许权重(数量)
+TIME_INTERVAL = 30  # days interval of analysis
+EACH_LINE_KEYWORDS = 1  # Number of keywords extracted from each line of data  Range:1-3
+EACH_WEEKEND_N = 12  # Number of keywords extracted each week
+ENABLE_TIME_WEIGHT = True  # Whether to allow weighting, only return the results that have specified keyword(s)
 TIME_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "time_analysis.txt"
-# 情感分析
+# Emotion analysis
 EMO_MODE = "emo_mode"
-ZEROEQUNUM = 'zeroequnum'  # 统计数据
+ZEROEQUNUM = 'zeroequnum' # Result displayed
 EQUNUM = 'equnum'
 POSNUM = 'posnum'
 NEGNUM = 'negnum'
@@ -60,22 +50,24 @@ ZEROEQU = 'zeroequ'
 EQU = 'equ'
 POS = 'pos'
 NEG = 'neg'
-EMO_EACH_LINE = 1  # 每一条数据选取几个关键词  范围:1-3
+EMO_EACH_LINE = 1  # Number of keywords extracted from each line of data  Range:1-3
 EACH_EMO_N = 50
-ENABLE_EMO_WEIGHT = True  # 是否允许权重
+ENABLE_EMO_WEIGHT = True  # Whether to allow weighting, only return the results that have specified keyword(s)
 EMO_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "emo_analysis.txt"
 
-# 条件分析类别
+
+# Conditional Analysis
 TIME_ANALYSIS = "timeAnalysis"
 EMOTION_ANALYSIS = "emotionAnalysis"
+
+
 
 if DEBUG:
     DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
     DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
     ANALYSIS_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
 
-
-# 环境准备，创建文件夹
+# Environment preparation, file creation
 def readyEnv():
     if not os.path.exists(DATA_PATH):
         os.mkdir(DATA_PATH)
@@ -84,40 +76,39 @@ def readyEnv():
     if not os.path.isfile(DATA_FILENAME):
         raise Exception("没有数据文件，请将数据文件拷贝到data目录下")
 
-# 将数据保存为pkl 增加二次读取时的速度
-# [[docid, comment_count, ...],[2020021100002988743, 0, 0, ...],[2020021100000087375, 0, 0, ...]]
+# Save data as pkl Increase speed on further processing
 def excelToPickle(filename=DATA_FILENAME, save_filename=DATA_SAVE_FILENAME):
-    if not os.path.exists(save_filename):  # pkl文件存在则不执行数据转换
+    if not os.path.exists(save_filename):  # Data conversion will not be performed if the pkl file exists
         print('[{}] This is the first read, file conversion in progress (3min) ...'.format(TIME()))
-        xlsx = xlrd.open_workbook(filename)  # 打开文件 第一次文件读取时间较长大约在2分钟左右
+        xlsx = xlrd.open_workbook(filename)  # Open the workbook, the first time of reading the file takes ard 2 mins
         temp_array = []
-        for sh in xlsx.sheets():  # 遍历数据保存至数组
+        for sh in xlsx.sheets():  # Traversing data to save to an array
             for r in range(sh.nrows):
                 temp_data = sh.row_values(r)
                 try:
-                    # 时间转换成datetime类型
+                    # Convert time to datetime format
                     temp_data[ARRAYID['pubdate']] = xlrd.xldate.xldate_as_datetime(temp_data[ARRAYID['pubdate']], 0)
                 except Exception as e:
                     pass
                 temp_array.append(temp_data)
 
-        with open(save_filename, 'wb') as file:  # 保存为pkl文件，增加读取速度
+        with open(save_filename, 'wb') as file:  # Save data as pkl Increase speed on further processing
             pickle.dump(temp_array, file)
 
-# 读取pkl文件
+# Read pkl rile
 def readPklFile(filename):
     with open(filename, 'rb') as file:
         temp = pickle.load(file)
     return temp
 
 
-# 用于分析处理数据  未使用
+# For analysing and processing of data
 def gainWordCloud(dataset):
     content = []
     for data in dataset:
         content.append(data[ARRAYID['content']])
-    content = content[1:]  # 去掉第一行表头数据
-    # 构建词云
+    content = content[1:]  # Remove the first row of table headers
+    # Construct word cloud
     print("[{}] Word cloud analysis in progress ...".format(TIME()))
     text = ""
     for i, w in enumerate(content):
@@ -131,37 +122,37 @@ def gainWordCloud(dataset):
                 print("#", end="")
         except Exception as e:
             pass
-    # jieba分词
+    # jieba word separation
     wordlist = jieba.cut(text, cut_all=True)
     wl = " ".join(wordlist)
-    # 设置参数
+    # Setting parameters
     wordcloud = WordCloud(
-        background_color='white',  # 背景颜色
-        max_words=1000,  # 设置最多现实的词数
-        stopwords=STOPWORDS,  # 设置停用词
-        max_font_size=100,  # 设置字体最大值
-        font_path='C:/Windows/Fonts/msyhbd.ttc',  # 设置字体，路径在电脑内
+        background_color='white',  # Background color
+        max_words=1000,  # Maximum number of words to displayed
+        stopwords=STOPWORDS,  # Setting stopwords
+        max_font_size=100,  # Setting maximum font size of word
+        font_path='C:/Windows/Fonts/msyhbd.ttc',  # Setting the font
         width=2000,
         height=1500,
-        random_state=30,  # 设置有多少种随机生成状态，即有多少种配色方案
+        random_state=30,  # Set how many randomly generated states i.e.no. of color to display
         # scale=.5
     ).generate(wl)
-    # 展示词云
+    # show word cloud
     plt.imshow(wordcloud)
-    # 是否显示想x，y坐标
+    # show x,y-axis or not
     plt.axis("off")
     plt.show()
-    # 写入文件
-    wordcloud.to_file('analysis.png')  # 把词云保存下
+    # show wordcloud
+    wordcloud.to_file('analysis.png')  # save wordcloud
 
-# 提取content前n个关键词 (默认3)
+# Extract the first n keywords of content (default 3)
 def extractNKeywords(dataset, nkey=NKEY, analysis_nkey_filename=ANALYSIS_NKEY_FILENAME):
     if not os.path.exists(analysis_nkey_filename):
         print('[{}] This is the first time for keyword extraction(#->1000) (2h) ...'.format(TIME()))
         nkey_array = []
-        for i, v in enumerate(dataset):  # []
+        for i, v in enumerate(dataset):
             try:
-                keywords = jieba.analyse.extract_tags(v[ARRAYID['content']], topK=nkey, withWeight=False, allowPOS=())  # 使用jieba库分析关键词
+                keywords = jieba.analyse.extract_tags(v[ARRAYID['content']], topK=nkey, withWeight=False, allowPOS=())
                 if len(keywords) > 0:
                     nkey_array.append(keywords)
                 else:
@@ -177,13 +168,13 @@ def extractNKeywords(dataset, nkey=NKEY, analysis_nkey_filename=ANALYSIS_NKEY_FI
             pickle.dump(nkey_array, file)
         print()
 
-# 数据展示保存
+# Data display preservation
 def saveToTxt(text, filename):
     with open(filename, 'a+', encoding='utf-8') as f:
         f.write(text)
         f.write("\n")
 
-# 关键词提取，并保存
+# Keyword extraction, and save
 def extrectAnalysisKeyWords(emode, exdict, numn, remove_words, weight_enable):
     text = ""
     activen = 0
@@ -206,34 +197,33 @@ def extrectAnalysisKeyWords(emode, exdict, numn, remove_words, weight_enable):
     return text
 
 
-# 遍历数据，进行条件分析
+# Traversing data for conditional analysis
 def conditionAnalysis(dataset, nkey_array, mode):
     if mode:
-        # 时间分析
-        first_date, second_date = None, None  # 滚动赋值  None NULL nul 空值
+        # Time analysis
+        first_date, second_date = None, None
         dt = datetime.timedelta(days=TIME_INTERVAL)
         time_dict = {}
-        # 情感分析
+        # Emotion analysis
         emo_num_dict = {ZEROEQUNUM:0, EQUNUM:0, POSNUM:0, NEGNUM:0}
         emo_dict = {ZEROEQU: {}, EQU:{}, POS:{}, NEG:{}}
 
-        # 数据循环
+        # data loop
         for i in range(0, len(dataset)):
-            # 时间分析
+            # Time analysis
             if TIME_ANALYSIS in mode:
                 now_date = dataset[i][ARRAYID['pubdate']]
-                # 判断是否是时间类型
+                # Determine if it is a time type
                 if isinstance(now_date, datetime.datetime):
-                    if first_date is None:  # 第一次时间赋值
+                    if first_date is None:  # First time assignment
                         temp_date = str(now_date.year)+"-"+str(now_date.month)+"-"+str(now_date.day)
                         first_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")
                         second_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")+dt
                         # print(first_date, second_date)
-                    # 判断时间范围
+                    # Determine time range
                     if first_date <= now_date <= second_date and i != len(dataset)-1:
                         for nk in range(0, EACH_LINE_KEYWORDS):
                             nkword = nkey_array[i][nk]
-
                             if nkword in time_dict:
                                 time_dict[nkword] += 1
                             else:
@@ -247,7 +237,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
                                 saveToTxt(tt, INTERESTING_CONTENT_FILENAME)
 
                     else:
-                        # 查找每周评论走向
+                        # Find weekly reviews
                         timetext = str(first_date.strftime("%Y-%m-%d-%H:%M:%S")) + "->" + str(second_date.strftime("%Y-%m-%d-%H:%M:%S"))
                         timetext += extrectAnalysisKeyWords(TIME_MODE, time_dict, EACH_WEEKEND_N, REMOVE_WORDS, ENABLE_TIME_WEIGHT)
                         saveToTxt(timetext, TIME_TXT_FILENAME)
@@ -255,11 +245,11 @@ def conditionAnalysis(dataset, nkey_array, mode):
                         first_date = second_date
                         second_date = second_date+dt
 
-            # 情绪倾向分析
+            # emotion trend analysis
             if EMOTION_ANALYSIS in mode:
                 negativeemo_count = dataset[i][ARRAYID['negativeemo_count']]
                 positiveemo_count = dataset[i][ARRAYID['positiveemo_count']]
-                # 统计数量  {ZEROEQUNUM:0, EQUNUM:0, POSNUM:0, NEGNUM:0}
+                # Result counts
                 if negativeemo_count > positiveemo_count:
                     emo_num_dict[NEGNUM] += 1
                 elif negativeemo_count < positiveemo_count:
@@ -269,7 +259,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
                 elif negativeemo_count == positiveemo_count and positiveemo_count == 0:
                     emo_num_dict[ZEROEQUNUM] += 1
 
-                # 统计关键词
+                # Keywords statistic
                 for emonk in range(0, EMO_EACH_LINE):
                     emonkword = nkey_array[i][emonk]
                     if negativeemo_count > positiveemo_count:
@@ -301,7 +291,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
                         emotext += "\n"
                     saveToTxt(emotext, EMO_TXT_FILENAME)
 
-            # 进度显示
+            # Show progress of processing
             if i % 80000 == 0:
                 print("\n{} / {}  ".format(i, len(dataset)), end="")
             if i % 1000 == 0:
@@ -311,28 +301,22 @@ def conditionAnalysis(dataset, nkey_array, mode):
 def mainAnalysis():
     print(" ----------- Start of data analysis ----------- ")
 
-    # 1. 数据处理部分
-    readyEnv()  # 准备环境，新建data和analysis文件夹
-    excelToPickle()  # 数据转换，从excel到pkl对象化存储  目的：加速读取速度
+    readyEnv()
+    excelToPickle()
     print('[{}] File reading in progress (6s) ...'.format(TIME()))
-    dataset = readPklFile(DATA_SAVE_FILENAME)  # 此函数读取excel文件中全部数据 返回文件数据  时间大约6秒
-    # print(dataset[1][21])
-
-    # 2. 信息处理部分
+    dataset = readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
     print('[{}] Keyword extraction of data ...'.format(TIME()))
-    extractNKeywords(dataset)  # 提取关键词
+    extractNKeywords(dataset)
     print('[{}] Read keyword information ...'.format(TIME()))
-    nkey_array = readPklFile(ANALYSIS_NKEY_FILENAME)  # 关键词文件读取
-    print(nkey_array[0], nkey_array[1])
+    nkey_array = readPklFile(ANALYSIS_NKEY_FILENAME)  # Keyword file reading
     print('[{}] File reading completed. len_dataset:{} <-> len_nkey_array:{} ...'.format(TIME(), len(dataset), len(nkey_array)))
     if len(dataset) != len(nkey_array):
         raise Exception("数据处理出现错误，长度不一致！")
     # print('[{}] Word cloud analysis of data ...'.format(TIME()))
     # gainWordCloud(dataset)
 
-    # 3. 分析数据
-    # dataset根据时间排序
-    # 1. 按时间进行关键词分析 ()
+    # dataset sort according to time
+    # 1. Keyword analysis by time ()
     print('[{}] Step 1: Time analysis of data ...'.format(TIME()))
     print('[{}] Step 2: Emotion analysis of data ...'.format(TIME()))
     print('[{}] Step 3: Keyword extraction and filtering ...'.format(TIME()))
