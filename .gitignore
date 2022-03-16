@@ -1,5 +1,7 @@
 .git/
 .idea/
 data/
-analysis
+analysis/
 otherFunction/
+
+test.py
