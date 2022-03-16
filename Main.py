@@ -12,115 +12,10 @@ import datetime
 import math
 
 from Config import *
+import Emotion
+import Keywords
+import Preprocessing
 
-
-
-
-if DEBUG:
-    DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
-    DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
-    ANALYSIS_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
-
-# Environment preparation, file creation
-def readyEnv():
-    if not os.path.exists(DATA_PATH):
-        os.mkdir(DATA_PATH)
-    if not os.path.exists(ANALYSIS_PATH):
-        os.mkdir(ANALYSIS_PATH)
-    if not os.path.isfile(DATA_FILENAME):
-        raise Exception("没有数据文件，请将数据文件拷贝到data目录下")
-
-# Save data as pkl Increase speed on further processing
-def excelToPickle(filename=DATA_FILENAME, save_filename=DATA_SAVE_FILENAME):
-    if not os.path.exists(save_filename):  # Data conversion will not be performed if the pkl file exists
-        print('[{}] This is the first read, file conversion in progress (3min) ...'.format(TIME()))
-        xlsx = xlrd.open_workbook(filename)  # Open the workbook, the first time of reading the file takes ard 2 mins
-        temp_array = []
-        for sh in xlsx.sheets():  # Traversing data to save to an array
-            for r in range(sh.nrows):
-                temp_data = sh.row_values(r)
-                try:
-                    # Convert time to datetime format
-                    temp_data[ARRAYID['pubdate']] = xlrd.xldate.xldate_as_datetime(temp_data[ARRAYID['pubdate']], 0)
-                except Exception as e:
-                    pass
-                temp_array.append(temp_data)
-
-        with open(save_filename, 'wb') as file:  # Save data as pkl Increase speed on further processing
-            pickle.dump(temp_array, file)
-
-# Read pkl rile
-def readPklFile(filename):
-    with open(filename, 'rb') as file:
-        temp = pickle.load(file)
-    return temp
-
-
-# For analysing and processing of data
-def gainWordCloud(dataset):
-    content = []
-    for data in dataset:
-        content.append(data[ARRAYID['content']])
-    content = content[1:]  # Remove the first row of table headers
-    # Construct word cloud
-    print("[{}] Word cloud analysis in progress ...".format(TIME()))
-    text = ""
-    for i, w in enumerate(content):
-        try:
-            keywords = jieba.analyse.extract_tags(w, topK=1, withWeight=False, allowPOS=())
-            if len(keywords) > 0:
-                text += str(keywords[0])
-            if i % 40000 == 0:
-                print("\n{} / {}  ".format(i, len(content)), end="")
-            if i % 1000 == 0:
-                print("#", end="")
-        except Exception as e:
-            pass
-    # jieba word separation
-    wordlist = jieba.cut(text, cut_all=True)
-    wl = " ".join(wordlist)
-    # Setting parameters
-    wordcloud = WordCloud(
-        background_color='white',  # Background color
-        max_words=1000,  # Maximum number of words to displayed
-        stopwords=STOPWORDS,  # Setting stopwords
-        max_font_size=100,  # Setting maximum font size of word
-        font_path='C:/Windows/Fonts/msyhbd.ttc',  # Setting the font
-        width=2000,
-        height=1500,
-        random_state=30,  # Set how many randomly generated states i.e.no. of color to display
-        # scale=.5
-    ).generate(wl)
-    # show word cloud
-    plt.imshow(wordcloud)
-    # show x,y-axis or not
-    plt.axis("off")
-    plt.show()
-    # show wordcloud
-    wordcloud.to_file('analysis.png')  # save wordcloud
-
-# Extract the first n keywords of content (default 3)
-def extractNKeywords(dataset, nkey=NKEY, analysis_nkey_filename=ANALYSIS_NKEY_FILENAME):
-    if not os.path.exists(analysis_nkey_filename):
-        print('[{}] This is the first time for keyword extraction(#->1000) (2h) ...'.format(TIME()))
-        nkey_array = []
-        for i, v in enumerate(dataset):
-            try:
-                keywords = jieba.analyse.extract_tags(v[ARRAYID['content']], topK=nkey, withWeight=False, allowPOS=())
-                if len(keywords) > 0:
-                    nkey_array.append(keywords)
-                else:
-                    nkey_array.append([''])
-                if i % 40000 == 0:
-                    print("\n{} / {}  ".format(i, len(dataset)), end="")
-                if i % 1000 == 0:
-                    print("#", end="")
-            except Exception as e:
-                nkey_array.append([''])
-
-        with open(analysis_nkey_filename, 'wb') as file:  # 保存分析结果
-            pickle.dump(nkey_array, file)
-        print()
 
 # Data display preservation
 def saveToTxt(text, filename):
@@ -193,7 +88,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
                     else:
                         # Find weekly reviews
                         timetext = str(first_date.strftime("%Y-%m-%d-%H:%M:%S")) + "->" + str(second_date.strftime("%Y-%m-%d-%H:%M:%S"))
-                        timetext += extrectAnalysisKeyWords(TIME_MODE, time_dict, EACH_WEEKEND_N, REMOVE_WORDS, ENABLE_TIME_WEIGHT)
+                        timetext += extrectAnalysisKeyWords(TIME_MODE, time_dict, EACH_WEEKEND_N, KEY_STOP_WORDS, ENABLE_TIME_WEIGHT)
                         saveToTxt(timetext, TIME_TXT_FILENAME)
                         time_dict = {}
                         first_date = second_date
@@ -241,7 +136,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
                     emotext = str(emo_num_dict) + "\n\n"
                     for emok, emov in emo_dict.items():
                         emotext += str(emok) + " "
-                        emotext += extrectAnalysisKeyWords(EMO_MODE, emov, EACH_EMO_N, REMOVE_WORDS, ENABLE_EMO_WEIGHT)
+                        emotext += extrectAnalysisKeyWords(EMO_MODE, emov, EACH_EMO_N, KEY_STOP_WORDS, ENABLE_EMO_WEIGHT)
                         emotext += "\n"
                     saveToTxt(emotext, EMO_TXT_FILENAME)
 
@@ -255,29 +150,33 @@ def conditionAnalysis(dataset, nkey_array, mode):
 def mainAnalysis():
     print(" ----------- Start of data analysis ----------- ")
 
-    readyEnv()
-    excelToPickle()
+    # Preprocessing
+    Preprocessing.readyEnv()
+    Preprocessing.excelToPickle()
     print('[{}] File reading in progress (6s) ...'.format(TIME()))
-    dataset = readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
+    dataset = Preprocessing.readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
     print('[{}] Keyword extraction of data ...'.format(TIME()))
-    extractNKeywords(dataset)
+    # print(dataset[1])
+
+    # Keywords
+    Keywords.extractNKeywords(dataset, KEY_NUMS, KEY_NKEY_FILENAME)
     print('[{}] Read keyword information ...'.format(TIME()))
-    nkey_array = readPklFile(ANALYSIS_NKEY_FILENAME)  # Keyword file reading
-    print('[{}] File reading completed. len_dataset:{} <-> len_nkey_array:{} ...'.format(TIME(), len(dataset), len(nkey_array)))
-    if len(dataset) != len(nkey_array):
-        raise Exception("数据处理出现错误，长度不一致！")
+    # nkey_array = Preprocessing.readPklFile(ANALYSIS_NKEY_FILENAME)  # Keyword file reading
+    # print('[{}] File reading completed. len_dataset:{} <-> len_nkey_array:{} ...'.format(TIME(), len(dataset), len(nkey_array)))
+    # if len(dataset) != len(nkey_array):
+    #     raise Exception("Error -> Errors in data processing, inconsistent lengths！")
     # print('[{}] Word cloud analysis of data ...'.format(TIME()))
     # gainWordCloud(dataset)
-
-    # dataset sort according to time
-    # 1. Keyword analysis by time ()
-    print('[{}] Step 1: Time analysis of data ...'.format(TIME()))
-    print('[{}] Step 2: Emotion analysis of data ...'.format(TIME()))
-    print('[{}] Step 3: Keyword extraction and filtering ...'.format(TIME()))
-    conditionAnalysis(dataset, nkey_array, [TIME_ANALYSIS, EMOTION_ANALYSIS])
-
-    print("\n", '[{}] Keyword Time Analysis ...'.format(TIME()))
-    print(INTERESTING_TEXT)
+    #
+    # # dataset sort according to time
+    # # 1. Keyword analysis by time ()
+    # print('[{}] Step 1: Time analysis of data ...'.format(TIME()))
+    # print('[{}] Step 2: Emotion analysis of data ...'.format(TIME()))
+    # print('[{}] Step 3: Keyword extraction and filtering ...'.format(TIME()))
+    # conditionAnalysis(dataset, nkey_array, [TIME_ANALYSIS, EMOTION_ANALYSIS])
+    #
+    # print("\n", '[{}] Keyword Time Analysis ...'.format(TIME()))
+    # print(INTERESTING_TEXT)
 
     print(" ----------- End of data analysis ----------- ")
 

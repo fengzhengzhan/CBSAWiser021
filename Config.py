@@ -1,8 +1,9 @@
+# -*- coding:utf-8 -*-
 import os
 import time
 """
 suggest to use python3.8
-Install package: C:\python38>python.exe -m pip install xlrd
+Install package: C:\python38>python.exe -m pip install xlrd==1.2.0
 """
 
 # All configuration items in the program are in this file
@@ -11,19 +12,38 @@ Install package: C:\python38>python.exe -m pip install xlrd
 DEBUG = False  # debug mode
 VISUAL = False  # Visualization
 VISUAL_SAVE = True
+MULTI_MODE = True
 
-# data files
+ARRAYID = {'docid':0, 'comment_count':1, 'like_count':2, 'dislike_count':3, 'love_count':4, 'haha_count':5, 'wow_count':6, 'angry_count':7, 'sad_count':8, 'share_count':9, 'view_count':10, 'negativeemo_count':11, 'positiveemo_count':12, 'influence_count':13, 'headline':14, 'author*':15, 'pubname':16, 'pubdate':17, 'region':18, 'fans_count':19, 'author_type':20, 'content':21}  # 字典 便于访问字段对应的列
+TIME = lambda :time.strftime('%H:%M:%S',time.localtime(time.time()))  # Anonymous function to return the time. TIME()
+file_time = str(time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())))
+
+
+'''Preprocessing'''
 DATA_PATH = "data"
 ANALYSIS_PATH = "analysis"
 DATA_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edited.xlsx"
 DATA_SAVE_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edited.pkl"
-ANALYSIS_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "analysis_nkey_array.pkl"
 
-ARRAYID = {'docid':0, 'comment_count':1, 'like_count':2, 'dislike_count':3, 'love_count':4, 'haha_count':5, 'wow_count':6, 'angry_count':7, 'sad_count':8, 'share_count':9, 'view_count':10, 'negativeemo_count':11, 'positiveemo_count':12, 'influence_count':13, 'headline':14, 'author*':15, 'pubname':16, 'pubdate':17, 'region':18, 'fans_count':19, 'author_type':20, 'content':21}  # 字典 便于访问字段对应的列
-TIME = lambda :time.strftime('%H:%M:%S',time.localtime(time.time()))  # Anonymous function to return the time
-file_time = str(time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())))
 
-REMOVE_WORDS = ['https', 'com', 'did', 'http', '01', 'bit', '', 'www', '10', '11', '12', '14', '23', '...', 'E6%', 'D100', 'was', '精液', 'light', 'small', '武漢', '確診', '醫生', '香港', '抗疫', '肺炎', '中國', '疫情', '防疫', '我們', '港人', '醫院', '美國', '檢測', '新冠', '疫苗', '接種', 'face', '英國', 'Shared', 'Hong', '病毒', '台灣', '你們', '一個', '個案', '點新聞', '甚麼', '新聞', '他們', '大學生', '政府', '國家', '蘋果', '英文', ' 最佳', '這句', '因為', '毛記', 'dotdotnews']  # 剔除词汇
+'''Keywords'''
+KEY_NUMS = 12  # Number of alternative analytic words for easy processing during analysis.
+KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "keywords_nkey_array.pkl"
+# Keyword Extraction Algorithm
+TFIDF = 'TF-IDF'
+TEXTRANK = 'TextRank'
+KEY_ANALUSIS_MODE = TFIDF  # TFIDF  TEXTRANK
+KEY_STOP_WORDS = []
+with open("data/StopWords.txt", 'r', encoding="utf-8") as f:
+    for line in f:
+        KEY_STOP_WORDS.append(line.replace('\n', ''))
+
+if DEBUG:
+    DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
+    DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
+    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
+
+'''Emotion'''
 INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""
