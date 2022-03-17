@@ -18,7 +18,7 @@ def extractOneWord(one_data):
                 one_data[ARRAYID['content']], topK=KEY_NUMS, withWeight=False, allowPOS=())
         temp_dict[one_data[ARRAYID['docid']]] = keywords
     except Exception as e:
-        pass
+        temp_dict[one_data[ARRAYID['docid']]] = []
     return temp_dict
 
 # Customize threads and return analysis values,
@@ -48,23 +48,23 @@ def thread_analysis(split_dataset, nkey_dict):
     for one in thread_list:
         one.join()
         result = one.get_result()
-        if len(result) > 0:
-            for k, v in result.items():
-                nkey_dict[k] = v
+        for k, v in result.items():
+            nkey_dict[k] = v
 
 
 # Extract the first n keywords of content (default 3)
 def extractNKeywords(dataset, nkey, analysis_nkey_filename):
     if not os.path.exists(analysis_nkey_filename):
         if MULTI_MODE:
-            print('[{}] This is the first time for keyword extraction in multiprocessing mode. (#->1000) () ...'.format(TIME()))
+            print('[{}] This is the first time for keyword extraction in multiprocessing mode. (30min) ...'.format(TIME()))
             cpu_cnt = multiprocessing.cpu_count()
             each_datalen = int(len(dataset) / cpu_cnt)
-            print(len(dataset), each_datalen, cpu_cnt)
+            # print(len(dataset), each_datalen, cpu_cnt)
+
             nkey_dict = multiprocessing.Manager().dict()
             process_list = []
             for i in range(cpu_cnt):
-                print(each_datalen*i, each_datalen*(i+1))
+                print("{} / {}".format(each_datalen*i, each_datalen*(i+1)))
                 if i == cpu_cnt - 1:
                     p = multiprocessing.Process(target=thread_analysis, args=(dataset[each_datalen*i:], nkey_dict, ))  # 实例化进程对象
                 else:
@@ -74,11 +74,10 @@ def extractNKeywords(dataset, nkey, analysis_nkey_filename):
                 process_list.append(p)
             for one in process_list:
                 one.join()
-            print(len(nkey_dict))
-            print(nkey_dict)
+            nkey_dict = dict(nkey_dict)
         else:
-            print('[{}] This is the first time for keyword extraction(#->1000) (2h) ...'.format(TIME()))
-            nkey_array = []
+            print('[{}] This is the first time for keyword extraction(#->1000) (1h) ...'.format(TIME()))
+            nkey_dict = {}
             for i, v in enumerate(dataset):
                 try:
                     if KEY_ANALUSIS_MODE == TFIDF:
@@ -88,19 +87,18 @@ def extractNKeywords(dataset, nkey, analysis_nkey_filename):
                         keywords = jieba.analyse.textrank(
                             v[ARRAYID['content']], topK=nkey, withWeight=False, allowPOS=())
                     if len(keywords) > 0:
-                        nkey_array.append(keywords)
+                        nkey_dict[v[ARRAYID['docid']]] = keywords
                     else:
-                        nkey_array.append([''])
+                        nkey_dict[v[ARRAYID['docid']]] = []
                     if i % 40000 == 0:
                         print("\n{} / {}  ".format(i, len(dataset)), end="")
                     if i % 1000 == 0:
                         print("#", end="")
                 except Exception as e:
-                    nkey_array.append([''])
+                    nkey_dict[v[ARRAYID['docid']]] = []
 
-
-
-        with open(analysis_nkey_filename, 'wb') as file:  # 保存分析结果
+        print('[{}] The length after analysis is {}. ...'.format(TIME(), len(nkey_dict)))
+        with open(analysis_nkey_filename, 'wb') as file:  # Save analysis results.
             pickle.dump(nkey_dict, file)
         print()
 

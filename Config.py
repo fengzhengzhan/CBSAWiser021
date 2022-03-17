@@ -12,7 +12,7 @@ Install package: C:\python38>python.exe -m pip install xlrd==1.2.0
 DEBUG = False  # debug mode
 VISUAL = False  # Visualization
 VISUAL_SAVE = True
-MULTI_MODE = True
+MULTI_MODE = False  # Multiprocessing extract key words
 
 ARRAYID = {'docid':0, 'comment_count':1, 'like_count':2, 'dislike_count':3, 'love_count':4, 'haha_count':5, 'wow_count':6, 'angry_count':7, 'sad_count':8, 'share_count':9, 'view_count':10, 'negativeemo_count':11, 'positiveemo_count':12, 'influence_count':13, 'headline':14, 'author*':15, 'pubname':16, 'pubdate':17, 'region':18, 'fans_count':19, 'author_type':20, 'content':21}  # 字典 便于访问字段对应的列
 TIME = lambda :time.strftime('%H:%M:%S',time.localtime(time.time()))  # Anonymous function to return the time. TIME()
@@ -28,7 +28,7 @@ DATA_SAVE_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edite
 
 '''Keywords'''
 KEY_NUMS = 12  # Number of alternative analytic words for easy processing during analysis.
-KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "keywords_nkey_array.pkl"
+KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "keywords_nkey_dict.pkl"
 # Keyword Extraction Algorithm
 TFIDF = 'TF-IDF'
 TEXTRANK = 'TextRank'
@@ -41,7 +41,7 @@ with open("data/StopWords.txt", 'r', encoding="utf-8") as f:
 if DEBUG:
     DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
     DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
-    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
+    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "dict_nkey_test.pkl"
 
 '''Emotion'''
 INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
