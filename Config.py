@@ -4,6 +4,7 @@ import time
 """
 suggest to use python3.8
 Install package: C:\python38>python.exe -m pip install xlrd==1.2.0
+pip install numpy matplotlib pillow wordcloud imageio jieba snownlp itchat -i https://pypi.tuna.tsinghua.edu.cn/simple
 """
 
 # All configuration items in the program are in this file
@@ -20,6 +21,7 @@ file_time = str(time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())))
 
 
 '''Preprocessing'''
+PRESTR = "1 Preprocessing"
 DATA_PATH = "data"
 ANALYSIS_PATH = "analysis"
 DATA_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edited.xlsx"
@@ -27,12 +29,17 @@ DATA_SAVE_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edite
 
 
 '''Keywords'''
+KEYSTR = "2 Keywords"
 KEY_NUMS = 12  # Number of alternative analytic words for easy processing during analysis.
 KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "keywords_nkey_dict.pkl"
 # Keyword Extraction Algorithm
 TFIDF = 'TF-IDF'
 TEXTRANK = 'TextRank'
 KEY_ANALUSIS_MODE = TFIDF  # TFIDF  TEXTRANK
+KEY_NKEY = 3  # the number of keywords to be extracted
+KEY_CLOUDNUM = 50  # Number of words drawn by the word cloud.
+KEY_CLOUD_PATH = ANALYSIS_PATH + os.sep + file_time + "wordcloud.png"
+
 KEY_STOP_WORDS = []
 with open("data/StopWords.txt", 'r', encoding="utf-8") as f:
     for line in f:
@@ -41,14 +48,14 @@ with open("data/StopWords.txt", 'r', encoding="utf-8") as f:
 if DEBUG:
     DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
     DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
-    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "dict_nkey_test.pkl"
+    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
 
 '''Emotion'''
 INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""
 
-NKEY = 3  # the number of keywords to be extracted
+
 # Analysis by time
 TIME_MODE = "time_mode"
 TIME_INTERVAL = 30  # days interval of analysis

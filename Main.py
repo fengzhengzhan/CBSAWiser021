@@ -150,23 +150,25 @@ def conditionAnalysis(dataset, nkey_array, mode):
 def mainAnalysis():
     print(" ----------- Start of data analysis ----------- ")
 
-    # Preprocessing
+    # 1. Preprocessing
     Preprocessing.readyEnv()
     Preprocessing.excelToPickle()
-    print('[{}] File reading in progress (6s) ...'.format(TIME()))
+    print('[{}] {} -> File reading in progress (6s) ...'.format(TIME(), PRESTR))
     dataset = Preprocessing.readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
-    print('[{}] Keyword extraction of data ...'.format(TIME()))
+    print('[{}] {} -> Keyword extraction of data ...'.format(TIME(), PRESTR))
     # print(dataset[1])
 
-    # Keywords
-    Keywords.extractNKeywords(dataset, KEY_NUMS, KEY_NKEY_FILENAME)
-    print('[{}] Read keyword information ...'.format(TIME()))
-    # nkey_array = Preprocessing.readPklFile(ANALYSIS_NKEY_FILENAME)  # Keyword file reading
-    # print('[{}] File reading completed. len_dataset:{} <-> len_nkey_array:{} ...'.format(TIME(), len(dataset), len(nkey_array)))
-    # if len(dataset) != len(nkey_array):
-    #     raise Exception("Error -> Errors in data processing, inconsistent lengths！")
-    # print('[{}] Word cloud analysis of data ...'.format(TIME()))
-    # gainWordCloud(dataset)
+    # 2. Keywords
+    Keywords.extractAllKeywords(dataset, KEY_NUMS, KEY_NKEY_FILENAME)
+    print('[{}] {} -> Read keyword information ...'.format(TIME(), KEYSTR))
+    allkey_dict = Preprocessing.readPklFile(KEY_NKEY_FILENAME)  # Keyword file reading
+    print('[{}] {} -> File reading completed. len_dataset:{} <-> len_nkey_dict:{} ...'.format(TIME(), KEYSTR, len(dataset), len(allkey_dict)))
+    if len(dataset) != len(allkey_dict):
+        raise Exception("Error -> Errors in data processing, inconsistent lengths！")
+    nkey_dict, wordcloudlist = Keywords.extractNKeywords(allkey_dict, KEY_NKEY)
+    # print(len(nkey_dict), wordcloudlist)
+    print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
+    Keywords.visWordCloud(wordcloudlist)
     #
     # # dataset sort according to time
     # # 1. Keyword analysis by time ()
