@@ -21,3 +21,8 @@ The program automatically generates folders
 8. You can set the words of interest
 9. Time analysis interval
 
+## Update Function
+
+1. More accurate keyword extraction, and high frequency keywords drawing word cloud.
+
+

@@ -56,7 +56,7 @@ def thread_analysis(split_dataset, allkey_dict):
 def extractAllKeywords(dataset, keynums, analysis_allkey_filename):
     if not os.path.exists(analysis_allkey_filename):
         if MULTI_MODE:
-            print('[{}] This is the first time for keyword extraction in multiprocessing mode. (30min) ...'.format(TIME()))
+            print('[{}] This is the first time for keyword extraction in multiprocessing mode (30min) ...'.format(TIME()))
             cpu_cnt = multiprocessing.cpu_count()
             each_datalen = int(len(dataset) / cpu_cnt)
             # print(len(dataset), each_datalen, cpu_cnt)
@@ -97,7 +97,7 @@ def extractAllKeywords(dataset, keynums, analysis_allkey_filename):
                 except Exception as e:
                     allkey_dict[v[ARRAYID['docid']]] = []
 
-        print('[{}] The length after analysis is {}. ...'.format(TIME(), len(allkey_dict)))
+        print('[{}] The length after analysis is {} ...'.format(TIME(), len(allkey_dict)))
         with open(analysis_allkey_filename, 'wb') as file:  # Save analysis results.
             pickle.dump(allkey_dict, file)
         print()
@@ -134,16 +134,32 @@ def extractNKeywords(allkey_dict, nkey):
 
 # For analysing and processing of data
 def visWordCloud(wordclouddict):
-    # Setting parameters
-    wordcloud = WordCloud(
-        background_color='white',  # Background color
-        max_words=KEY_CLOUDNUM,  # Maximum number of words to displayed
-        max_font_size=300,  # Setting maximum font size of word
-        font_path='C:/Windows/Fonts/msyhbd.ttc',  # set fonts
-        width=2000,
-        height=1500,
-        random_state=30,  # Set how many randomly generated states i.e.no. of color to display
-        # scale=.5
-    ).generate_from_frequencies(wordclouddict)
-    # show wordcloud
-    wordcloud.to_file(KEY_CLOUD_PATH)  # save wordcloud
+    if VISUAL_SAVE:
+        # Setting parameters
+        wordcloud = WordCloud(
+            background_color='white',  # Background color
+            max_words=KEY_CLOUDNUM,  # Maximum number of words to displayed
+            max_font_size=300,  # Setting maximum font size of word
+            font_path='C:/Windows/Fonts/msyhbd.ttc',  # set fonts
+            width=2000,
+            height=1500,
+            random_state=30,  # Set how many randomly generated states i.e.no. of color to display
+            # scale=.5
+        ).generate_from_frequencies(wordclouddict)
+        # show wordcloud
+        wordcloud.to_file(KEY_CLOUD_PATH)  # save wordcloud
+
+
+# Extracting the source of keywords
+# Linking sources to docid
+def extractSourceKeywords(dataset):
+    source_key_dict: 'dict[str:set]' = {}
+    for one in dataset[1:]:
+        authortype = one[ARRAYID['author_type']]
+        if authortype == '':
+            authortype = "匿名"
+        id = one[ARRAYID['docid']]
+        if authortype not in source_key_dict:
+            source_key_dict[authortype] = set()
+        source_key_dict[authortype].add(id)
+    return source_key_dict
