@@ -37,7 +37,7 @@ TFIDF = 'TF-IDF'
 TEXTRANK = 'TextRank'
 KEY_ANALUSIS_MODE = TFIDF  # TFIDF  TEXTRANK
 KEY_NKEY = 3  # the number of keywords to be extracted
-KEY_CLOUDNUM = 50  # Number of words drawn by the word cloud.
+KEY_CLOUDNUM = 80  # Number of words drawn by the word cloud.
 KEY_CLOUD_PATH = ANALYSIS_PATH + os.sep + file_time + "wordcloud.png"
 
 KEY_STOP_WORDS = []

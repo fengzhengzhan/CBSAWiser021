@@ -123,28 +123,27 @@ def extractNKeywords(allkey_dict, nkey):
         nkey_dict[k] = temp_key
 
     # Extracting the top n ranked terms.
-    wordcloudlist = []
+    wordclouddict = {}
     for _ in range(KEY_CLOUDNUM):
         temp_cloud = max(wordcloudmap, key=wordcloudmap.get)
-        wordcloudlist.append(temp_cloud)
+        wordclouddict[temp_cloud] = wordcloudmap[temp_cloud]
         wordcloudmap.pop(temp_cloud)
 
-    return nkey_dict, wordcloudlist
+    return nkey_dict, wordclouddict
 
 
 # For analysing and processing of data
-def visWordCloud(wordcloudlist):
-    wl = " ".join(wordcloudlist)
+def visWordCloud(wordclouddict):
     # Setting parameters
     wordcloud = WordCloud(
         background_color='white',  # Background color
         max_words=KEY_CLOUDNUM,  # Maximum number of words to displayed
-        max_font_size=100,  # Setting maximum font size of word
+        max_font_size=300,  # Setting maximum font size of word
         font_path='C:/Windows/Fonts/msyhbd.ttc',  # set fonts
         width=2000,
         height=1500,
         random_state=30,  # Set how many randomly generated states i.e.no. of color to display
         # scale=.5
-    ).generate(wl)
+    ).generate_from_frequencies(wordclouddict)
     # show wordcloud
     wordcloud.to_file(KEY_CLOUD_PATH)  # save wordcloud

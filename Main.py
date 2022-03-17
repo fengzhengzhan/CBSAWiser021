@@ -165,10 +165,10 @@ def mainAnalysis():
     print('[{}] {} -> File reading completed. len_dataset:{} <-> len_nkey_dict:{} ...'.format(TIME(), KEYSTR, len(dataset), len(allkey_dict)))
     if len(dataset) != len(allkey_dict):
         raise Exception("Error -> Errors in data processing, inconsistent lengths！")
-    nkey_dict, wordcloudlist = Keywords.extractNKeywords(allkey_dict, KEY_NKEY)
-    # print(len(nkey_dict), wordcloudlist)
+    nkey_dict, wordclouddict = Keywords.extractNKeywords(allkey_dict, KEY_NKEY)
+    # print(len(nkey_dict), wordclouddict)
     print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
-    Keywords.visWordCloud(wordcloudlist)
+    Keywords.visWordCloud(wordclouddict)
     #
     # # dataset sort according to time
     # # 1. Keyword analysis by time ()
