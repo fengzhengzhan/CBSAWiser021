@@ -9,15 +9,15 @@ The program automatically generates folders
 
 
 
-## 使用手册
+## User Manual
 
-1. 将文件analysis.py下载下来，首先运行一次代码，会创建两个文件data和analysis，会报错提示缺少数据文件。
-2. 首先将new_analytics_challenge_dataset_edited.xlsx数据文件复制到data目录下，然后运行程序对数据文件进行转换（3分钟），要将DEBUG模式设置为False。
-3. 数据转换大约需要3分钟，会在data目录下面生成一个.pkl文件，用于快速读取数据。
-4. 然后程序会提取每条数据的关键词，以便后续分析。提取关键词使用的是的jieba的python库（需要提前安装），此过程需要大约2小时。
-5. 如果不想等两小时，且不需要设置额外的参数，就把analysis_nkey_array.pkl拷贝到analysis文件夹下。
-6. 直接运行文件就会在analysis文件夹下面生成对应的分析文件。
-7. 分析文件分别是对时间的分析、对评论情绪的分析、对感兴趣内容的提取
-8. 可以设置感兴趣的词语
-9. 时间分析的间隔
+1. Download the files, first run the code once, it will create two files data and analysis, it will report an error indicating that the data file is missing.
+2. First copy the new_analytics_challenge_dataset_edited.xlsx data file to the data directory, then run the program to convert the data file (3 minutes), and set the DEBUG mode to False.
+3. The data conversion will take about 3 minutes and will generate a .pkl file under the data directory for fast data reading.
+4. Then the program will extract the keywords of each data item for subsequent analysis. The keywords are extracted using jieba's python library (which needs to be installed in advance), and the process takes about 2 hours.
+5. If you don't want to wait two hours and don't need to set additional parameters, copy analysis_nkey_array.pkl to the analysis folder.
+6. Running the file directly will generate the corresponding analysis files under the analysis folder.
+7. The analysis files are analysis of time, analysis of comment sentiment, and extraction of content of interest.
+8. You can set the words of interest
+9. Time analysis interval
 
