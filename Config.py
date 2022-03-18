@@ -41,7 +41,7 @@ KEY_CLOUDNUM = 80  # Number of words drawn by the word cloud.
 KEY_CLOUD_PATH = ANALYSIS_PATH + os.sep + file_time + "wordcloud.png"
 
 KEY_STOP_WORDS = []
-with open("data/StopWords.txt", 'r', encoding="utf-8") as f:
+with open("StopWords.txt", 'r', encoding="utf-8") as f:
     for line in f:
         KEY_STOP_WORDS.append(line.replace('\n', ''))
 
