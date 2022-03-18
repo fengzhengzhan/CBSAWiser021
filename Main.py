@@ -13,6 +13,9 @@ def mainAnalysis():
     Preprocessing.excelToPickle()
     print('[{}] {} -> File reading in progress (6s) ...'.format(TIME(), PRESTR))
     dataset: list[list] = Preprocessing.readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
+    datasetmap = Preprocessing.getIdMap(dataset)
+    docid_content = Preprocessing.getIDCont(datasetmap, PRE_ID_CONT)
+    # print(docid_content)
     print('[{}] {} -> Keyword extraction of data ...'.format(TIME(), PRESTR))
     # print(dataset[1], type(dataset))
 
@@ -29,11 +32,11 @@ def mainAnalysis():
     Keywords.visWordCloud(wordclouddict)
     print('[{}] {} -> Extracting the source of keywords ...'.format(TIME(), KEYSTR))
     source_key_dict = Keywords.extractSourceKeywords(dataset)
-    print(source_key_dict)
+    # print(source_key_dict)
     print('> Keyword Source : {}'.format(" ".join(source_key_dict.keys())))
     source_list = list(source_key_dict.keys())
     # print(type(source_list), source_list)
-    # Keywords.visSourceTime(dataset, source_list)
+    Keywords.visSourceTime(dataset, source_list)
 
 
     # # dataset sort according to time

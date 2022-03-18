@@ -5,6 +5,9 @@ import multiprocessing
 import threading
 from wordcloud import WordCloud
 import datetime
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+from matplotlib.pyplot import MultipleLocator
 
 from Config import *
 
@@ -171,8 +174,10 @@ def extractSourceKeywords(dataset):
 def visSourceTime(dataset, source_list):
     if VISUAL_SAVE:
         first_date, second_date = None, None
-        dt = datetime.timedelta(days=TIME_INTERVAL)
-        # Init the dict of source numbers。
+        dt = datetime.timedelta(days=KEY_SOURCETIME_INTERVAL)
+        plt_list = [source_list]
+        day_num = []
+        # Init the dict of source numbers.
         source_num_dict = {}
         for each in source_list:
             source_num_dict[each] = 0
@@ -189,34 +194,42 @@ def visSourceTime(dataset, source_list):
                     # print(first_date, second_date)
                 # Determine time range
                 if first_date <= now_date <= second_date and i != len(dataset) - 1:
-                    for nk in range(0, EACH_LINE_KEYWORDS):
-                        nkword = nkey_array[i][nk]
-                        if nkword in time_dict:
-                            time_dict[nkword] += 1
-                        else:
-                            time_dict[nkword] = 1
-                        if nkword in INTERESTING_WORDS:
-                            tt = str('keyward: ' + str(nkword) + "\n"
-                                     + now_date.strftime("%Y-%m-%d-%H:%M:%S") + "\n"
-                                     + 'positiveemo_count: ' + str(dataset[i][ARRAYID['positiveemo_count']]) + "\n"
-                                     + 'negativeemo_count: ' + str(dataset[i][ARRAYID['negativeemo_count']]) + "\n"
-                                     + str(dataset[i][ARRAYID['content']].encode("gbk", 'ignore').decode("gbk",
-                                                                                                         "ignore")).replace(
-                                '\s+', '\\\\').replace('\n', '\\\\') + "\n")
-                            saveToTxt(tt, INTERESTING_CONTENT_FILENAME)
-
+                    authortype = dataset[i][ARRAYID['author_type']]
+                    if authortype == '':
+                        authortype = "匿名"
+                    source_num_dict[authortype] += 1
                 else:
+                    temp_num = []
+                    for one in source_list:
+                        temp_num.append(source_num_dict[one])
+                    plt_list.append(temp_num)
+                    day_num.append(str(second_date)[2:4]+str(second_date)[5:7]+str(second_date)[8:10])
                     # Init the dict of source numbers。
                     source_num_dict = {}
                     for each in source_list:
                         source_num_dict[each] = 0
-
-                    # Find weekly reviews
-                    timetext = str(first_date.strftime("%Y-%m-%d-%H:%M:%S")) + "->" + str(
-                        second_date.strftime("%Y-%m-%d-%H:%M:%S"))
-                    timetext += extrectAnalysisKeyWords(TIME_MODE, time_dict, EACH_WEEKEND_N, KEY_STOP_WORDS,
-                                                        ENABLE_TIME_WEIGHT)
-                    saveToTxt(timetext, TIME_TXT_FILENAME)
-                    time_dict = {}
                     first_date = second_date
                     second_date = second_date + dt
+
+        # print(plt_list)
+        # Folding Line Chart
+        plt.figure(figsize=(16, 8))
+        ax = plt.gca()
+        x = day_num
+        # print(len(x))
+        for sourcei in range(len(source_list)):
+            temp_line = []
+            for onej in range(1, len(plt_list)):
+                temp_line.append(plt_list[onej][sourcei])
+            plt.plot(x, temp_line, label=source_list[sourcei])
+        ax.set_xticks(x)
+        ax.set_xticklabels(x, rotation=40)
+        x_major_locator = MultipleLocator(int(len(day_num) / 9))
+        ax.xaxis.set_major_locator(x_major_locator)
+        plt.xlabel("Number of Comments")  # Horizontal coordinate name
+        plt.ylabel("Comments interval")  # Vertical coordinate name
+        legend_font = {"family": "msyh"}
+        myfont = fm.FontProperties(fname='C:/Windows/Fonts/msyh.ttc')
+        plt.legend(loc="best", prop=myfont)  # Figure legend
+        plt.savefig(KEY_VIS_SOURCE_PATH)
+        # plt.show()

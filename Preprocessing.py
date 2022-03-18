@@ -38,3 +38,19 @@ def readPklFile(filename):
     with open(filename, 'rb') as file:
         temp = pickle.load(file)
     return temp
+
+# Get docid map contents
+def getIdMap(dataset):
+    datasetmap = {}
+    for one in dataset:
+        datasetmap[one[ARRAYID['docid']]] = one
+    return datasetmap
+
+
+def getIDCont(datasetmap, pre_id_cont):
+    temp_list = []
+    for each in pre_id_cont:
+        temp_list.append(datasetmap[each])
+    return temp_list
+
+
