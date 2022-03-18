@@ -4,6 +4,7 @@ import pickle
 import multiprocessing
 import threading
 from wordcloud import WordCloud
+import datetime
 
 from Config import *
 
@@ -97,7 +98,7 @@ def extractAllKeywords(dataset, keynums, analysis_allkey_filename):
                 except Exception as e:
                     allkey_dict[v[ARRAYID['docid']]] = []
 
-        print('[{}] The length after analysis is {} ...'.format(TIME(), len(allkey_dict)))
+        print('[{}] The length after analysis is {}. ...'.format(TIME(), len(allkey_dict)))
         with open(analysis_allkey_filename, 'wb') as file:  # Save analysis results.
             pickle.dump(allkey_dict, file)
         print()
@@ -139,11 +140,12 @@ def visWordCloud(wordclouddict):
         wordcloud = WordCloud(
             background_color='white',  # Background color
             max_words=KEY_CLOUDNUM,  # Maximum number of words to displayed
-            max_font_size=300,  # Setting maximum font size of word
-            font_path='C:/Windows/Fonts/msyhbd.ttc',  # set fonts
+            min_font_size=4,
+            max_font_size=None,  # Setting maximum font size of word
+            font_path='C:/Windows/Fonts/msyh.ttc',  # set fonts
             width=2000,
             height=1500,
-            random_state=30,  # Set how many randomly generated states i.e.no. of color to display
+            random_state=50,  # Set how many randomly generated states i.e.no. of color to display
             # scale=.5
         ).generate_from_frequencies(wordclouddict)
         # show wordcloud
@@ -163,3 +165,58 @@ def extractSourceKeywords(dataset):
             source_key_dict[authortype] = set()
         source_key_dict[authortype].add(id)
     return source_key_dict
+
+
+# Plotting the percentage of speech in each camp according to the timeline
+def visSourceTime(dataset, source_list):
+    if VISUAL_SAVE:
+        first_date, second_date = None, None
+        dt = datetime.timedelta(days=TIME_INTERVAL)
+        # Init the dict of source numbers。
+        source_num_dict = {}
+        for each in source_list:
+            source_num_dict[each] = 0
+        # data loop
+        for i in range(0, len(dataset)):
+            # Time analysis
+            now_date = dataset[i][ARRAYID['pubdate']]
+            # Determine if it is a time type
+            if isinstance(now_date, datetime.datetime):
+                if first_date is None:  # First time assignment
+                    temp_date = str(now_date.year) + "-" + str(now_date.month) + "-" + str(now_date.day)
+                    first_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")
+                    second_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d") + dt
+                    # print(first_date, second_date)
+                # Determine time range
+                if first_date <= now_date <= second_date and i != len(dataset) - 1:
+                    for nk in range(0, EACH_LINE_KEYWORDS):
+                        nkword = nkey_array[i][nk]
+                        if nkword in time_dict:
+                            time_dict[nkword] += 1
+                        else:
+                            time_dict[nkword] = 1
+                        if nkword in INTERESTING_WORDS:
+                            tt = str('keyward: ' + str(nkword) + "\n"
+                                     + now_date.strftime("%Y-%m-%d-%H:%M:%S") + "\n"
+                                     + 'positiveemo_count: ' + str(dataset[i][ARRAYID['positiveemo_count']]) + "\n"
+                                     + 'negativeemo_count: ' + str(dataset[i][ARRAYID['negativeemo_count']]) + "\n"
+                                     + str(dataset[i][ARRAYID['content']].encode("gbk", 'ignore').decode("gbk",
+                                                                                                         "ignore")).replace(
+                                '\s+', '\\\\').replace('\n', '\\\\') + "\n")
+                            saveToTxt(tt, INTERESTING_CONTENT_FILENAME)
+
+                else:
+                    # Init the dict of source numbers。
+                    source_num_dict = {}
+                    for each in source_list:
+                        source_num_dict[each] = 0
+
+                    # Find weekly reviews
+                    timetext = str(first_date.strftime("%Y-%m-%d-%H:%M:%S")) + "->" + str(
+                        second_date.strftime("%Y-%m-%d-%H:%M:%S"))
+                    timetext += extrectAnalysisKeyWords(TIME_MODE, time_dict, EACH_WEEKEND_N, KEY_STOP_WORDS,
+                                                        ENABLE_TIME_WEIGHT)
+                    saveToTxt(timetext, TIME_TXT_FILENAME)
+                    time_dict = {}
+                    first_date = second_date
+                    second_date = second_date + dt

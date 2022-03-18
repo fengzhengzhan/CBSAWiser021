@@ -33,7 +33,6 @@ def excelToPickle(filename=DATA_FILENAME, save_filename=DATA_SAVE_FILENAME):
         with open(save_filename, 'wb') as file:  # Save data as pkl Increase speed on further processing
             pickle.dump(temp_array, file)
 
-
 # Read pkl rile
 def readPklFile(filename):
     with open(filename, 'rb') as file:
