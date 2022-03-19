@@ -152,6 +152,11 @@ def visWordCloud(wordclouddict):
             # scale=.5
         ).generate_from_frequencies(wordclouddict)
         # show wordcloud
+        if VISUAL:
+            plt.imshow(wordcloud)
+            plt.axis("off")
+            plt.show()
+
         wordcloud.to_file(KEY_CLOUD_PATH)  # save wordcloud
 
 
@@ -224,7 +229,7 @@ def visSourceTime(dataset, source_list):
             plt.plot(x, temp_line, label=source_list[sourcei])
         ax.set_xticks(x)
         ax.set_xticklabels(x, rotation=40)
-        x_major_locator = MultipleLocator(int(len(day_num) / 9))
+        x_major_locator = MultipleLocator(int(len(day_num) / 12))
         ax.xaxis.set_major_locator(x_major_locator)
         plt.xlabel("Number of Comments")  # Horizontal coordinate name
         plt.ylabel("Comments interval")  # Vertical coordinate name
@@ -232,4 +237,5 @@ def visSourceTime(dataset, source_list):
         myfont = fm.FontProperties(fname='C:/Windows/Fonts/msyh.ttc')
         plt.legend(loc="best", prop=myfont)  # Figure legend
         plt.savefig(KEY_VIS_SOURCE_PATH)
-        # plt.show()
+        if VISUAL:
+            plt.show()
