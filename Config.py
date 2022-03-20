@@ -13,7 +13,7 @@ pip install numpy matplotlib pillow wordcloud imageio jieba snownlp itchat -i ht
 DEBUG = False  # debug mode
 VISUAL = True  # Visualization
 VISUAL_SAVE = True
-MULTI_MODE = False  # Multiprocessing extract key words
+MULTI_MODE = True  # Multiprocessing extract key words
 
 ARRAYID = {'docid':0, 'comment_count':1, 'like_count':2, 'dislike_count':3, 'love_count':4, 'haha_count':5, 'wow_count':6, 'angry_count':7, 'sad_count':8, 'share_count':9, 'view_count':10, 'negativeemo_count':11, 'positiveemo_count':12, 'influence_count':13, 'headline':14, 'author*':15, 'pubname':16, 'pubdate':17, 'region':18, 'fans_count':19, 'author_type':20, 'content':21}  # 字典 便于访问字段对应的列
 TIME = lambda :time.strftime('%H:%M:%S',time.localtime(time.time()))  # Anonymous function to return the time. TIME()

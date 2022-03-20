@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import jieba
+import jieba.analyse
 import pickle
 import multiprocessing
 import threading
@@ -57,7 +57,7 @@ def thread_analysis(split_dataset, allkey_dict):
             allkey_dict[k] = v
 
 # Extract the first n keywords of content (default 3)
-def extractAllKeywords(dataset, keynums, analysis_allkey_filename):
+def extractAllKeywords(dataset, analysis_allkey_filename):
     if not os.path.exists(analysis_allkey_filename):
         if MULTI_MODE:
             print('[{}] This is the first time for keyword extraction in multiprocessing mode (30min) ...'.format(TIME()))
@@ -86,10 +86,10 @@ def extractAllKeywords(dataset, keynums, analysis_allkey_filename):
                 try:
                     if KEY_ANALUSIS_MODE == TFIDF:
                         keywords = jieba.analyse.extract_tags(
-                            v[ARRAYID['content']], topK=keynums, withWeight=False, allowPOS=())
+                            v[ARRAYID['content']], topK=KEY_NUMS, withWeight=False, allowPOS=())
                     elif KEY_ANALUSIS_MODE == TEXTRANK:
                         keywords = jieba.analyse.textrank(
-                            v[ARRAYID['content']], topK=keynums, withWeight=False, allowPOS=())
+                            v[ARRAYID['content']], topK=KEY_NUMS, withWeight=False, allowPOS=())
                     if len(keywords) > 0:
                         allkey_dict[v[ARRAYID['docid']]] = keywords
                     else:
@@ -99,6 +99,7 @@ def extractAllKeywords(dataset, keynums, analysis_allkey_filename):
                     if i % 1000 == 0:
                         print("#", end="")
                 except Exception as e:
+                    print(e)
                     allkey_dict[v[ARRAYID['docid']]] = []
 
         print('[{}] The length after analysis is {}. ...'.format(TIME(), len(allkey_dict)))

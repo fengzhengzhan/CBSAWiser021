@@ -20,7 +20,7 @@ def mainAnalysis():
     # print(dataset[1], type(dataset))
 
     # 2. Keywords
-    Keywords.extractAllKeywords(dataset, KEY_NUMS, KEY_NKEY_FILENAME)
+    Keywords.extractAllKeywords(dataset, KEY_NKEY_FILENAME)
     print('[{}] {} -> Read keyword information ...'.format(TIME(), KEYSTR))
     allkey_dict = Preprocessing.readPklFile(KEY_NKEY_FILENAME)  # Keyword file reading
     print('[{}] {} -> File reading completed. len_dataset:{} <-> len_nkey_dict:{}'.format(TIME(), KEYSTR, len(dataset), len(allkey_dict)))
