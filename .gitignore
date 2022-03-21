@@ -1,9 +1,11 @@
 .git/
 .idea/
 __pycache__/
-data/
 analysis/
+data/new_analytics_challenge_dataset_edited.pkl
+data/new_analytics_challenge_dataset_edited.xlsx
+data/test.pkl
+data/test.xlsx
 otherFunction/
 
 test.py
-tests.py

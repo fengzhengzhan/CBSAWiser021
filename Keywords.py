@@ -234,7 +234,6 @@ def visSourceTime(dataset, source_list):
         ax.xaxis.set_major_locator(x_major_locator)
         plt.xlabel("Number of Comments")  # Horizontal coordinate name
         plt.ylabel("Comments interval")  # Vertical coordinate name
-        legend_font = {"family": "msyh"}
         myfont = fm.FontProperties(fname='C:/Windows/Fonts/msyh.ttc')
         plt.legend(loc="best", prop=myfont)  # Figure legend
         plt.savefig(KEY_VIS_SOURCE_PATH)

@@ -43,7 +43,7 @@ KEY_SOURCETIME_INTERVAL = 7  # Discourse source analysis interval.
 KEY_VIS_SOURCE_PATH = ANALYSIS_PATH + os.sep + file_time + "sourcetime.jpg"
 
 KEY_STOP_WORDS = []
-with open("StopWords.txt", 'r', encoding="utf-8") as f:
+with open(DATA_PATH + os.sep + "StopWords.txt", 'r', encoding="utf-8") as f:
     for line in f:
         KEY_STOP_WORDS.append(line.replace('\n', ''))
 

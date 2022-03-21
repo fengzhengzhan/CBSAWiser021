@@ -13,8 +13,8 @@ def mainAnalysis():
     Preprocessing.excelToPickle()
     print('[{}] {} -> File reading in progress (6s) ...'.format(TIME(), PRESTR))
     dataset: list[list] = Preprocessing.readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
-    datasetmap = Preprocessing.getIdMap(dataset)
-    docid_content = Preprocessing.getIDCont(datasetmap, PRE_ID_CONT)
+    map_dataset = Preprocessing.getIdMap(dataset)
+    docid_content = Preprocessing.getIDCont(map_dataset, PRE_ID_CONT)  # Get content from the docid list.
     # print(docid_content)
     print('[{}] {} -> Keyword extraction of data ...'.format(TIME(), PRESTR))
     # print(dataset[1], type(dataset))
@@ -26,8 +26,8 @@ def mainAnalysis():
     print('[{}] {} -> File reading completed. len_dataset:{} <-> len_nkey_dict:{}'.format(TIME(), KEYSTR, len(dataset), len(allkey_dict)))
     if len(dataset) != len(allkey_dict):
         raise Exception("Error -> Errors in data processing, inconsistent lengths！")
-    nkey_dict, wordclouddict = Keywords.extractNKeywords(allkey_dict, KEY_NKEY)  # wordclouddict contains all keys and weights.
-    # print(len(nkey_dict), wordclouddict)
+    map_nkey, wordclouddict = Keywords.extractNKeywords(allkey_dict, KEY_NKEY)  # wordclouddict contains all keys and weights.
+    # print(len(map_nkey), wordclouddict)
     print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
     Keywords.visWordCloud(wordclouddict)
     print('[{}] {} -> Extracting the source of keywords ...'.format(TIME(), KEYSTR))
