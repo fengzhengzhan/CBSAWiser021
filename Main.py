@@ -40,8 +40,11 @@ def mainAnalysis():
 
     # 3. Emotion
     print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
-    Emotion.StatisticalEmotions(dataset)
-    print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
+    Emotion.statisticalEmotions(dataset, EMO_FILENAME)
+    map_emotion = Preprocessing.readPklFile(EMO_FILENAME)
+    if len(dataset) != len(map_emotion):
+        raise Exception("Error -> Errors in data processing, inconsistent lengths！")
+    print('[{}] {} -> Logistic regression ...'.format(TIME(), EMOSTR))
 
 
 

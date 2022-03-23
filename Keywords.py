@@ -60,7 +60,7 @@ def thread_analysis(split_dataset, allkey_dict):
 def extractAllKeywords(dataset, analysis_allkey_filename):
     if not os.path.exists(analysis_allkey_filename):
         if MULTI_MODE:
-            print('[{}] This is the first time for keyword extraction in multiprocessing mode (30min) ...'.format(TIME()))
+            print('[{}] This is the first time for keyword extraction in multiprocessing mode ...'.format(TIME()))
             cpu_cnt = multiprocessing.cpu_count()
             each_datalen = int(len(dataset) / cpu_cnt)
             # print(len(dataset), each_datalen, cpu_cnt)
@@ -80,7 +80,7 @@ def extractAllKeywords(dataset, analysis_allkey_filename):
                 one.join()
             allkey_dict = dict(allkey_dict)
         else:
-            print('[{}] This is the first time for keyword extraction(#->1000) (1h) ...'.format(TIME()))
+            print('[{}] This is the first time for keyword extraction(#->1000) ...'.format(TIME()))
             allkey_dict = {}
             for i, v in enumerate(dataset):
                 try:
@@ -102,10 +102,10 @@ def extractAllKeywords(dataset, analysis_allkey_filename):
                     print(e)
                     allkey_dict[v[ARRAYID['docid']]] = []
 
+        print()
         print('[{}] The length after analysis is {}. ...'.format(TIME(), len(allkey_dict)))
         with open(analysis_allkey_filename, 'wb') as file:  # Save analysis results.
             pickle.dump(allkey_dict, file)
-        print()
 
 
 # Keywords are retrieved according to docid, no longer using location, more accurate.

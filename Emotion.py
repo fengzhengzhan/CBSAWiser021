@@ -1,21 +1,100 @@
 # -*- coding:utf-8 -*-
 import datetime
+import pickle
+import multiprocessing
+import threading
 from cnsenti import Sentiment
 
 from Config import *
 
 # Statistical emotions
-def StatisticalEmotions(dataset):
-    map_emotion = {}
-    senti = Sentiment()
-    for one in dataset[1:]:
+
+def emotionAnalysis(one_data, senti):
+    temp_dict = {}
+    try:
+        result = senti.sentiment_count(one_data[ARRAYID['content']])
+        temp_dict[one_data[ARRAYID['docid']]] = result
+    except Exception as e:
+        result = {'words': 0, 'sentences': 0, 'pos': 0, 'neg': 0}
+        temp_dict[one_data[ARRAYID['docid']]] = result
+    return temp_dict
+
+class KeyThread(threading.Thread):
+    def __init__(self, func, args):
+        super(KeyThread, self).__init__()
+        self.func = func
+        self.args = args
+
+    def run(self):
+        self.result = self.func(*self.args)
+
+    def get_result(self):
         try:
-            result = senti.sentiment_count(one[ARRAYID['content']])
-            map_emotion[one[ARRAYID['docid']]] = result
-            # print(result)
+            return self.result
         except Exception as e:
-            result = {'words': 0, 'sentences': 0, 'pos': 0, 'neg': 0}
-            map_emotion[one[ARRAYID['docid']]] = result
+            return None
+
+def thread_analysis(split_dataset, senti, map_emotion):
+    thread_list = []
+    for each in split_dataset:
+        t = KeyThread(emotionAnalysis, args=(each, senti,))
+        t.setDaemon(True)
+        t.start()
+        thread_list.append(t)
+    for one in thread_list:
+        one.join()
+        result = one.get_result()
+        for k, v in result.items():
+            map_emotion[k] = v
+
+
+def statisticalEmotions(dataset, analysis_emotion_filename):
+    if not os.path.exists(analysis_emotion_filename):
+        if MULTI_MODE:
+            print('[{}] This is the first time for emotion analysis in multiprocessing mode ...'.format(TIME()))
+            cpu_cnt = multiprocessing.cpu_count()
+            each_datalen = int(len(dataset) / cpu_cnt)
+            # print(len(dataset), each_datalen, cpu_cnt)
+
+            map_emotion = multiprocessing.Manager().dict()
+            senti = Sentiment()
+            process_list = []
+            for i in range(cpu_cnt):
+                print("{} / {}".format(each_datalen * i, each_datalen * (i + 1)))
+                if i == cpu_cnt - 1:
+                    p = multiprocessing.Process(target=thread_analysis,
+                                                args=(dataset[each_datalen * i:], senti, map_emotion,))  # 实例化进程对象
+                else:
+                    p = multiprocessing.Process(target=thread_analysis,
+                                                args=(dataset[each_datalen * i:each_datalen * (i + 1)], senti, map_emotion,))  # 实例化进程对象
+                p.daemon = True
+                p.start()
+                process_list.append(p)
+            for one in process_list:
+                one.join()
+            map_emotion = dict(map_emotion)
+        else:
+            print('[{}] This is the first time for emotion analysis(#->1000) ...'.format(TIME()))
+            map_emotion = {}
+            senti = Sentiment()
+            for i, one in enumerate(dataset):
+                try:
+                    result = senti.sentiment_count(one[ARRAYID['content']])
+                    map_emotion[one[ARRAYID['docid']]] = result
+                    # print(result)
+                    if i % 40000 == 0:
+                        print("\n{} / {}  ".format(i, len(dataset)), end="")
+                    if i % 1000 == 0:
+                        print("#", end="")
+                except Exception as e:
+                    result = {'words': 0, 'sentences': 0, 'pos': 0, 'neg': 0}
+                    map_emotion[one[ARRAYID['docid']]] = result
+
+        print()
+        print('[{}] The length after analysis is {}. ...'.format(TIME(), len(map_emotion)))
+        with open(analysis_emotion_filename, 'wb') as file:  # Save analysis results.
+            pickle.dump(map_emotion, file)
+
 
 # Data display preservation
 def saveToTxt(text, filename):

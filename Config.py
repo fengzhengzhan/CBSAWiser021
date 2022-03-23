@@ -47,13 +47,10 @@ with open(DATA_PATH + os.sep + "StopWords.txt", 'r', encoding="utf-8") as f:
     for line in f:
         KEY_STOP_WORDS.append(line.replace('\n', ''))
 
-if DEBUG:
-    DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
-    DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
-    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
 
 '''Emotion'''
 EMOSTR = "3 Emotion"
+EMO_FILENAME = ANALYSIS_PATH + os.sep + "emotion_dict.pkl"
 INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""
@@ -85,3 +82,11 @@ EMO_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "emo_analysis.txt"
 # Conditional Analysis
 TIME_ANALYSIS = "timeAnalysis"
 EMOTION_ANALYSIS = "emotionAnalysis"
+
+
+# debug
+if DEBUG:
+    DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
+    DATA_SAVE_FILENAME = DATA_PATH + os.sep + "test.pkl"
+    KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
+    EMO_FILENAME = ANALYSIS_PATH + os.sep + "emotion_test.pkl"
