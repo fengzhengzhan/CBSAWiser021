@@ -1,5 +1,21 @@
 # -*- coding:utf-8 -*-
+import datetime
+from cnsenti import Sentiment
 
+from Config import *
+
+# Statistical emotions
+def StatisticalEmotions(dataset):
+    map_emotion = {}
+    senti = Sentiment()
+    for one in dataset[1:]:
+        try:
+            result = senti.sentiment_count(one[ARRAYID['content']])
+            map_emotion[one[ARRAYID['docid']]] = result
+            # print(result)
+        except Exception as e:
+            result = {'words': 0, 'sentences': 0, 'pos': 0, 'neg': 0}
+            map_emotion[one[ARRAYID['docid']]] = result
 
 # Data display preservation
 def saveToTxt(text, filename):

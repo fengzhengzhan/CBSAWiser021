@@ -34,4 +34,4 @@
 
 1. More accurate keyword extraction, and high frequency keyword.
 2. Graph of keyword sources and temporal changes in the number of comments by camp.
-3. Emotion a
+3. Emotion

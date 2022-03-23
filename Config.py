@@ -53,6 +53,7 @@ if DEBUG:
     KEY_NKEY_FILENAME = ANALYSIS_PATH + os.sep + "nkey_test.pkl"
 
 '''Emotion'''
+EMOSTR = "3 Emotion"
 INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""

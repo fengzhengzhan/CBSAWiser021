@@ -38,6 +38,12 @@ def mainAnalysis():
     # print(type(source_list), source_list)
     Keywords.visSourceTime(dataset, source_list)
 
+    # 3. Emotion
+    print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
+    Emotion.StatisticalEmotions(dataset)
+    print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
+
+
 
     # # dataset sort according to time
     # # 1. Keyword analysis by time ()
