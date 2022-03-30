@@ -84,7 +84,8 @@ EMO_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "emo_analysis.txt"
 TIME_ANALYSIS = "timeAnalysis"
 EMOTION_ANALYSIS = "emotionAnalysis"
 
-''''''
+'''Customized'''
+CUSSTR = "4 Customized"
 
 # debug
 if DEBUG:

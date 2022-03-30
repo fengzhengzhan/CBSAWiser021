@@ -38,14 +38,20 @@ def mainAnalysis():
 
     source_list = list(source_key_dict.keys())
     # print(type(source_list), source_list)
-    Keywords.visSourceTime(dataset, source_list, KEY_SOURCETIME_INTERVAL, "Total", KEY_VIS_SOURCE_PATH)
+    day_list, time_source_list = Keywords.timeSourceAnalysis(dataset, source_list, KEY_SOURCETIME_INTERVAL)
+    # for oneday in day_list:
+    #     print(int(oneday[0:4]), int(oneday[4:6]), int(oneday[6:8]))
+    Keywords.visTimeSource(day_list, time_source_list, source_list, "Total", KEY_VIS_SOURCE_PATH)
 
     # 3. Customized Keywords
+    print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
     gain_keywords = ["新冠", "檢測", "中國", "口罩", "經濟"]
     for idx, one in enumerate(gain_keywords):
+        print('[{}] {} -> {}  Processing ...'.format(TIME(), CUSSTR, one))
         folderpath = Customized.preEnv(idx, one)
         custom_dataset, map_correlate = Customized.customRelated(map_dataset, map_nkey, one)
-        Keywords.visSourceTime(custom_dataset, source_list, KEY_SOURCETIME_INTERVAL, one, folderpath + os.sep + KEY_SOURCEJPG)
+        cusone_day_list, cusone_time_source_list = Keywords.timeSourceAnalysis(custom_dataset, source_list, KEY_SOURCETIME_INTERVAL)
+        Keywords.visTimeSource(cusone_day_list, cusone_time_source_list, source_list, one, folderpath + os.sep + KEY_SOURCEJPG)
 
 
     gain_id_content = ['2020021100002988743', '2020021100000087375']

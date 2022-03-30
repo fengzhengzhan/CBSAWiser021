@@ -176,60 +176,69 @@ def extractSourceKeywords(dataset):
 
 
 # Plotting the percentage of speech in each camp according to the timeline
-def visSourceTime(dataset, source_list, source_interval, title, source_path):
-    if VISUAL_SAVE:
-        first_date, second_date = None, None
-        dt = datetime.timedelta(days=source_interval)
-        plt_list = [source_list]
-        day_num = []
-        # Init the dict of source numbers.
-        source_num_dict = {}
-        for each in source_list:
-            source_num_dict[each] = 0
-        # data loop
-        for i in range(0, len(dataset)):
-            # Time analysis
-            now_date = dataset[i][ARRAYID['pubdate']]
-            # Determine if it is a time type
-            if isinstance(now_date, datetime.datetime):
-                if first_date is None:  # First time assignment
-                    temp_date = str(now_date.year) + "-" + str(now_date.month) + "-" + str(now_date.day)
-                    first_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")
-                    second_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d") + dt
-                    # print(first_date, second_date)
-                # Determine time range
-                if first_date <= now_date <= second_date and i != len(dataset) - 1:
-                    authortype = dataset[i][ARRAYID['author_type']]
-                    if authortype == '':
-                        authortype = "匿名"
-                    source_num_dict[authortype] += 1
-                else:
-                    temp_num = []
-                    for one in source_list:
-                        temp_num.append(source_num_dict[one])
-                    plt_list.append(temp_num)
-                    day_num.append(str(second_date)[2:4]+str(second_date)[5:7]+str(second_date)[8:10])
-                    # Init the dict of source numbers。
-                    source_num_dict = {}
-                    for each in source_list:
-                        source_num_dict[each] = 0
-                    first_date = second_date
-                    second_date = second_date + dt
+def timeSourceAnalysis(dataset, source_list, source_interval):
+    first_date, second_date = None, None
+    dt = datetime.timedelta(days=source_interval)
+    day_list = []
+    time_source_list = [source_list, ]  # Corresponding quantities sorted by time
 
+    # Init the dict of source numbers.
+    source_num_dict = {}
+    for each in source_list:
+        source_num_dict[each] = 0
+    # data loop
+    i = -1
+    while i < len(dataset)+1:  # Leave one left
+        i += 1
+        # Time analysis
+        if i < len(dataset):
+            now_date = dataset[i][ARRAYID['pubdate']]
+        # Determine if it is a time type
+        if isinstance(now_date, datetime.datetime):
+            if first_date is None:  # First time assignment
+                temp_date = str(now_date.year) + "-" + str(now_date.month) + "-" + str(now_date.day)
+                first_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")
+                second_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d") + dt
+                # print(first_date, second_date)
+            # Determine time range
+            if i < len(dataset) and first_date <= now_date <= second_date:
+                authortype = dataset[i][ARRAYID['author_type']]
+                if authortype == '':
+                    authortype = "匿名"
+                source_num_dict[authortype] += 1
+            else:
+                temp_num = []
+                for one in source_list:
+                    temp_num.append(source_num_dict[one])
+                time_source_list.append(temp_num)
+                day_list.append(str(second_date)[0:4]+str(second_date)[5:7]+str(second_date)[8:10])
+                # Init the dict of source numbers。
+                source_num_dict = {}
+                for each in source_list:
+                    source_num_dict[each] = 0
+                first_date = second_date
+                second_date = second_date + dt
+                if i < len(dataset):
+                    i -= 1
+
+    return day_list, time_source_list
+
+def visTimeSource(x_data, y_data, curves_num, title, source_path):
+    if VISUAL_SAVE:
         # print(plt_list)
         # Folding Line Chart
         plt.figure(figsize=(16, 8))
         ax = plt.gca()
-        x = day_num
+        x = x_data  # day_list
         # print(len(x))
-        for sourcei in range(len(source_list)):
-            temp_line = []
-            for onej in range(1, len(plt_list)):
-                temp_line.append(plt_list[onej][sourcei])
-            plt.plot(x, temp_line, label=source_list[sourcei])
+        for sourcei in range(len(curves_num)):
+            y = []
+            for dayj in range(1, len(y_data)):  # Skip start time
+                y.append(y_data[dayj][sourcei])
+            plt.plot(x, y, label=curves_num[sourcei])
         ax.set_xticks(x)
         ax.set_xticklabels(x, rotation=40)
-        x_major_locator = MultipleLocator(int(len(day_num) / 12))
+        x_major_locator = MultipleLocator(int(len(x_data) / 12))
         ax.xaxis.set_major_locator(x_major_locator)
         plt.rcParams['font.sans-serif'] = ['SimHei']
         plt.rcParams['axes.unicode_minus'] = False
