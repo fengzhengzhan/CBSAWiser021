@@ -3,6 +3,7 @@ from Config import *
 import Emotion
 import Keywords
 import Preprocessing
+import Customized
 
 
 def mainAnalysis():
@@ -14,7 +15,6 @@ def mainAnalysis():
     print('[{}] {} -> File reading in progress (6s) ...'.format(TIME(), PRESTR))
     dataset: list[list] = Preprocessing.readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
     map_dataset = Preprocessing.getIdMap(dataset)
-    docid_content = Preprocessing.getIDCont(map_dataset, PRE_ID_CONT)  # Get content from the docid list.
     # print(docid_content)
     print('[{}] {} -> Keyword extraction of data ...'.format(TIME(), PRESTR))
     # print(dataset[1], type(dataset))
@@ -27,24 +27,38 @@ def mainAnalysis():
     if len(dataset) != len(allkey_dict):
         raise Exception("Error -> Errors in data processing, inconsistent lengths！")
     map_nkey, wordclouddict = Keywords.extractNKeywords(allkey_dict, KEY_NKEY)  # wordclouddict contains all keys and weights.
+    print("> Keywords : {}".format(wordclouddict))
     # print(len(map_nkey), wordclouddict)
     print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
     Keywords.visWordCloud(wordclouddict)
     print('[{}] {} -> Extracting the source of keywords ...'.format(TIME(), KEYSTR))
     source_key_dict = Keywords.extractSourceKeywords(dataset)
     # print(source_key_dict)
-    print('> Keyword Source : {}'.format(" ".join(source_key_dict.keys())))
+    # print('> Keyword Source : {}'.format(" ".join(source_key_dict.keys())))
+
     source_list = list(source_key_dict.keys())
     # print(type(source_list), source_list)
-    Keywords.visSourceTime(dataset, source_list)
+    Keywords.visSourceTime(dataset, source_list, KEY_SOURCETIME_INTERVAL, "Total", KEY_VIS_SOURCE_PATH)
 
-    # 3. Emotion
-    print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
-    Emotion.statisticalEmotions(dataset, EMO_FILENAME)
-    map_emotion = Preprocessing.readPklFile(EMO_FILENAME)
-    if len(dataset) != len(map_emotion):
-        raise Exception("Error -> Errors in data processing, inconsistent lengths！")
-    print('[{}] {} -> Logistic regression ...'.format(TIME(), EMOSTR))
+    # 3. Customized Keywords
+    gain_keywords = ["新冠", "檢測", "中國", "口罩", "經濟"]
+    for idx, one in enumerate(gain_keywords):
+        folderpath = Customized.preEnv(idx, one)
+        custom_dataset, map_correlate = Customized.customRelated(map_dataset, map_nkey, one)
+        Keywords.visSourceTime(custom_dataset, source_list, KEY_SOURCETIME_INTERVAL, one, folderpath + os.sep + KEY_SOURCEJPG)
+
+
+    gain_id_content = ['2020021100002988743', '2020021100000087375']
+    docid_content = Preprocessing.getIDCont(map_dataset, gain_id_content)  # Get content from the docid list.
+    #
+    #
+    # # Emotion
+    # print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
+    # Emotion.statisticalEmotions(dataset, EMO_FILENAME)
+    # map_emotion = Preprocessing.readPklFile(EMO_FILENAME)
+    # if len(dataset) != len(map_emotion):
+    #     raise Exception("Error -> Errors in data processing, inconsistent lengths！")
+    # print('[{}] {} -> Logistic regression ...'.format(TIME(), EMOSTR))
 
 
 

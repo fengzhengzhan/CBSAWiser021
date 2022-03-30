@@ -26,7 +26,7 @@ DATA_PATH = "data"
 ANALYSIS_PATH = "analysis"
 DATA_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edited.xlsx"
 DATA_SAVE_FILENAME = DATA_PATH + os.sep + "new_analytics_challenge_dataset_edited.pkl"
-PRE_ID_CONT = ['2020021100002988743', '2020021100000087375']
+
 
 '''Keywords'''
 KEYSTR = "2 Keywords"
@@ -40,7 +40,8 @@ KEY_NKEY = 3  # the number of keywords to be extracted
 KEY_CLOUDNUM = 50  # Number of words drawn by the word cloud.
 KEY_CLOUD_PATH = ANALYSIS_PATH + os.sep + file_time + "wordcloud.png"
 KEY_SOURCETIME_INTERVAL = 7  # Discourse source analysis interval.
-KEY_VIS_SOURCE_PATH = ANALYSIS_PATH + os.sep + file_time + "sourcetime.jpg"
+KEY_SOURCEJPG = "sourcetime.jpg"
+KEY_VIS_SOURCE_PATH = ANALYSIS_PATH + os.sep + file_time + KEY_SOURCEJPG
 
 KEY_STOP_WORDS = []
 with open(DATA_PATH + os.sep + "StopWords.txt", 'r', encoding="utf-8") as f:
@@ -83,6 +84,7 @@ EMO_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "emo_analysis.txt"
 TIME_ANALYSIS = "timeAnalysis"
 EMOTION_ANALYSIS = "emotionAnalysis"
 
+''''''
 
 # debug
 if DEBUG:

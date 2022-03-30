@@ -133,7 +133,6 @@ def extractNKeywords(allkey_dict, nkey):
         temp_cloud = max(wordcloudmap, key=wordcloudmap.get)
         wordclouddict[temp_cloud] = wordcloudmap[temp_cloud]
         wordcloudmap.pop(temp_cloud)
-
     return nkey_dict, wordclouddict
 
 
@@ -177,10 +176,10 @@ def extractSourceKeywords(dataset):
 
 
 # Plotting the percentage of speech in each camp according to the timeline
-def visSourceTime(dataset, source_list):
+def visSourceTime(dataset, source_list, source_interval, title, source_path):
     if VISUAL_SAVE:
         first_date, second_date = None, None
-        dt = datetime.timedelta(days=KEY_SOURCETIME_INTERVAL)
+        dt = datetime.timedelta(days=source_interval)
         plt_list = [source_list]
         day_num = []
         # Init the dict of source numbers.
@@ -232,10 +231,13 @@ def visSourceTime(dataset, source_list):
         ax.set_xticklabels(x, rotation=40)
         x_major_locator = MultipleLocator(int(len(day_num) / 12))
         ax.xaxis.set_major_locator(x_major_locator)
+        plt.rcParams['font.sans-serif'] = ['SimHei']
+        plt.rcParams['axes.unicode_minus'] = False
+        myfont = fm.FontProperties(fname='C:/Windows/Fonts/msyh.ttc')
+        plt.title(title, fontdict={'weight': 'bold', 'size': 20})
         plt.xlabel("Number of Comments")  # Horizontal coordinate name
         plt.ylabel("Comments interval")  # Vertical coordinate name
-        myfont = fm.FontProperties(fname='C:/Windows/Fonts/msyh.ttc')
         plt.legend(loc="best", prop=myfont)  # Figure legend
-        plt.savefig(KEY_VIS_SOURCE_PATH)
+        plt.savefig(source_path)
         if VISUAL:
             plt.show()
