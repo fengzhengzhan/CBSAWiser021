@@ -31,17 +31,18 @@ def mainAnalysis():
     # print(len(map_nkey), wordclouddict)
     print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
     Keywords.visWordCloud(wordclouddict)
-    print('[{}] {} -> Extracting the source of keywords ...'.format(TIME(), KEYSTR))
-    source_key_dict = Keywords.extractSourceKeywords(dataset)
-    # print(source_key_dict)
-    # print('> Keyword Source : {}'.format(" ".join(source_key_dict.keys())))
+    print('[{}] {} -> Extracting the author of keywords ...'.format(TIME(), KEYSTR))
+    author_key_dict = Keywords.extractInterestingKeywords(dataset, ARRAYID['author_type'])
+    print(author_key_dict)
+    # print(author_key_dict)
+    # print('> Keyword Author : {}'.format(" ".join(author_key_dict.keys())))
 
-    source_list = list(source_key_dict.keys())
-    # print(type(source_list), source_list)
-    day_list, time_source_list = Keywords.timeSourceAnalysis(dataset, source_list, KEY_SOURCETIME_INTERVAL)
+    author_list = list(author_key_dict.keys())
+    # print(type(author_list), author_list)
+    day_list, time_author_list = Keywords.timeAuthorAnalysis(dataset, author_list, KEY_AUTHORTIME_INTERVAL)
     # for oneday in day_list:
     #     print(int(oneday[0:4]), int(oneday[4:6]), int(oneday[6:8]))
-    Keywords.visTimeSource(day_list, time_source_list, source_list, "Total", KEY_VIS_SOURCE_PATH)
+    Keywords.visTimeData(day_list, time_author_list, author_list, "Total", KEY_VIS_AUTHOR_PATH)
 
     # 3. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
@@ -50,8 +51,8 @@ def mainAnalysis():
         print('[{}] {} -> {}  Processing ...'.format(TIME(), CUSSTR, one))
         folderpath = Customized.preEnv(idx, one)
         custom_dataset, map_correlate = Customized.customRelated(map_dataset, map_nkey, one)
-        cusone_day_list, cusone_time_source_list = Keywords.timeSourceAnalysis(custom_dataset, source_list, KEY_SOURCETIME_INTERVAL)
-        Keywords.visTimeSource(cusone_day_list, cusone_time_source_list, source_list, one, folderpath + os.sep + KEY_SOURCEJPG)
+        cusone_day_list, cusone_time_author_list = Keywords.timeAuthorAnalysis(custom_dataset, author_list, KEY_AUTHORTIME_INTERVAL)
+        Keywords.visTimeData(cusone_day_list, cusone_time_author_list, author_list, one, folderpath + os.sep + KEY_AUTHORJPG)
 
 
     gain_id_content = ['2020021100002988743', '2020021100000087375']

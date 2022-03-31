@@ -160,32 +160,32 @@ def visWordCloud(wordclouddict):
         wordcloud.to_file(KEY_CLOUD_PATH)  # save wordcloud
 
 
-# Extracting the source of keywords
-# Linking sources to docid
-def extractSourceKeywords(dataset):
-    source_key_dict: 'dict[str:set]' = {}
+# Extracting the author/publisher of keywords
+# Linking author/publisher to docid
+def extractInterestingKeywords(dataset, coolid):
+    key_dict: 'dict[str:set]' = {}
     for one in dataset[1:]:
-        authortype = one[ARRAYID['author_type']]
-        if authortype == '':
-            authortype = "匿名"
+        type = one[coolid]
+        if type == '':
+            type = "匿名"
         id = one[ARRAYID['docid']]
-        if authortype not in source_key_dict:
-            source_key_dict[authortype] = set()
-        source_key_dict[authortype].add(id)
-    return source_key_dict
+        if type not in key_dict:
+            key_dict[type] = set()
+        key_dict[type].add(id)
+    return key_dict
 
 
 # Plotting the percentage of speech in each camp according to the timeline
-def timeSourceAnalysis(dataset, source_list, source_interval):
+def timeAuthorAnalysis(dataset, author_list, author_interval):
     first_date, second_date = None, None
-    dt = datetime.timedelta(days=source_interval)
+    dt = datetime.timedelta(days=author_interval)
     day_list = []
-    time_source_list = [source_list, ]  # Corresponding quantities sorted by time
+    time_author_list = [author_list, ]  # Corresponding quantities sorted by time
 
-    # Init the dict of source numbers.
-    source_num_dict = {}
-    for each in source_list:
-        source_num_dict[each] = 0
+    # Init the dict of author numbers.
+    author_num_dict = {}
+    for each in author_list:
+        author_num_dict[each] = 0
     # data loop
     i = -1
     while i < len(dataset)+1:  # Leave one left
@@ -205,25 +205,27 @@ def timeSourceAnalysis(dataset, source_list, source_interval):
                 authortype = dataset[i][ARRAYID['author_type']]
                 if authortype == '':
                     authortype = "匿名"
-                source_num_dict[authortype] += 1
+                author_num_dict[authortype] += 1
             else:
                 temp_num = []
-                for one in source_list:
-                    temp_num.append(source_num_dict[one])
-                time_source_list.append(temp_num)
+                for one in author_list:
+                    temp_num.append(author_num_dict[one])
+                time_author_list.append(temp_num)
                 day_list.append(str(second_date)[0:4]+str(second_date)[5:7]+str(second_date)[8:10])
-                # Init the dict of source numbers。
-                source_num_dict = {}
-                for each in source_list:
-                    source_num_dict[each] = 0
+                # Init the dict of author numbers。
+                author_num_dict = {}
+                for each in author_list:
+                    author_num_dict[each] = 0
                 first_date = second_date
                 second_date = second_date + dt
                 if i < len(dataset):
                     i -= 1
 
-    return day_list, time_source_list
+    return day_list, time_author_list
 
-def visTimeSource(x_data, y_data, curves_num, title, source_path):
+
+# visualized data
+def visTimeData(x_data, y_data, curves_num, title, data_path):
     if VISUAL_SAVE:
         # print(plt_list)
         # Folding Line Chart
@@ -231,11 +233,11 @@ def visTimeSource(x_data, y_data, curves_num, title, source_path):
         ax = plt.gca()
         x = x_data  # day_list
         # print(len(x))
-        for sourcei in range(len(curves_num)):
+        for datai in range(len(curves_num)):
             y = []
             for dayj in range(1, len(y_data)):  # Skip start time
-                y.append(y_data[dayj][sourcei])
-            plt.plot(x, y, label=curves_num[sourcei])
+                y.append(y_data[dayj][datai])
+            plt.plot(x, y, label=curves_num[datai])
         ax.set_xticks(x)
         ax.set_xticklabels(x, rotation=40)
         x_major_locator = MultipleLocator(int(len(x_data) / 12))
@@ -247,6 +249,6 @@ def visTimeSource(x_data, y_data, curves_num, title, source_path):
         plt.xlabel("Number of Comments")  # Horizontal coordinate name
         plt.ylabel("Comments interval")  # Vertical coordinate name
         plt.legend(loc="best", prop=myfont)  # Figure legend
-        plt.savefig(source_path)
+        plt.savefig(data_path)
         if VISUAL:
             plt.show()
