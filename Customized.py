@@ -1,3 +1,5 @@
+import csv
+
 from Config import *
 
 def preEnv(index, folderWord):
@@ -23,6 +25,8 @@ def customRelated(map_dataset, map_nkey, onekey):
 
     return custom_dataset, map_correlate
 
-
-def dataSaveTocsv():
-    pass
+def dataSaveTocsv(headers, values, filepath):
+    with open(filepath, "w", newline='') as fp:
+        writer = csv.writer(fp)
+        writer.writerow(headers)
+        writer.writerows(values)

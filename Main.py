@@ -38,8 +38,6 @@ def mainAnalysis():
     author_list = list(author_key_dict.keys())
     # print(type(author_list), author_list)
     author_day_list, time_author_list = Keywords.timeDataAnalysis(dataset, author_list, ARRAYID['author_type'], KEY_TIME_INTERVAL)
-    # for oneday in day_list:
-    #     print(int(oneday[0:4]), int(oneday[4:6]), int(oneday[6:8]))
     Keywords.visTimeData(author_day_list, time_author_list, author_list, "Author Total", KEY_VIS_AUTHOR_PATH)
 
     print('[{}] {} -> Extracting the publisher of keywords ...'.format(TIME(), KEYSTR))
@@ -63,8 +61,22 @@ def mainAnalysis():
         Keywords.visTimeData(cusone_publisher_day_list, cusone_time_publisher_list, publisher_list, "Publisher:"+one, folderpath + os.sep + KEY_PUBLISHERJPG)
         # print(len(cusone_publisher_day_list), len(cusone_time_publisher_list))
 
+        # Prepare data
+        headers = ["Year", "Month", "Day"] + cusone_time_author_list[0] + cusone_time_publisher_list[0]
+        values = []
+        for idx, oneday in enumerate(cusone_author_day_list):
+            temp = []
+            temp.append(int(oneday[0:4]))
+            temp.append(int(oneday[4:6]))
+            temp.append(int(oneday[6:8]))
+            temp += cusone_time_author_list[idx+1]
+            temp += cusone_time_publisher_list[idx+1]
+
+            values.append(temp)
+
+        # print(headers, len(headers), len(values))
         # Save data to .csv file.
-        Customized.dataSaveTocsv()
+        Customized.dataSaveTocsv(headers, values, folderpath + os.sep + CUS_CSVFILENAME)
 
     gain_id_content = ['2020021100002988743', '2020021100000087375']
     docid_content = Preprocessing.getIDCont(map_dataset, gain_id_content)  # Get content from the docid list.

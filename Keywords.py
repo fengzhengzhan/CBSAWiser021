@@ -152,7 +152,7 @@ def visWordCloud(wordclouddict):
             # scale=.5
         ).generate_from_frequencies(wordclouddict)
         # show wordcloud
-        if VISUAL:
+        if VISUAL_SHOW:
             plt.imshow(wordcloud)
             plt.axis("off")
             plt.show()
@@ -250,5 +250,5 @@ def visTimeData(x_data, y_data, curves_num, title, data_path):
         plt.ylabel("Comments interval")  # Vertical coordinate name
         plt.legend(loc="best", prop=myfont)  # Figure legend
         plt.savefig(data_path)
-        if VISUAL:
+        if VISUAL_SHOW:
             plt.show()
