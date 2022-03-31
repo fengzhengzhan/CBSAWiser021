@@ -46,7 +46,11 @@ def mainAnalysis():
     publisher_day_list, time_publisher_list = Keywords.timeDataAnalysis(dataset, publisher_list, ARRAYID['pubname'], KEY_TIME_INTERVAL)
     Keywords.visTimeData(publisher_day_list, time_publisher_list, publisher_list, "Publisher Total", KEY_VIS_AUTHOR_PATH)
 
-    # 3. Customized Keywords
+    # 3. Emotion
+    # Emotion.statisticalEmotions(dataset, EMO_FILENAME)
+
+
+    # 4. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
     gain_keywords = ["新冠", "檢測", "中國", "口罩", "經濟"]
     for idx, one in enumerate(gain_keywords):
@@ -60,6 +64,9 @@ def mainAnalysis():
         cusone_publisher_day_list, cusone_time_publisher_list = Keywords.timeDataAnalysis(custom_dataset, publisher_list, ARRAYID['pubname'], KEY_TIME_INTERVAL)
         Keywords.visTimeData(cusone_publisher_day_list, cusone_time_publisher_list, publisher_list, "Publisher:"+one, folderpath + os.sep + KEY_PUBLISHERJPG)
         # print(len(cusone_publisher_day_list), len(cusone_time_publisher_list))
+        # Emotion
+
+
 
         # Prepare data
         headers = ["Year", "Month", "Day"] + cusone_time_author_list[0] + cusone_time_publisher_list[0]

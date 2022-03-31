@@ -4,6 +4,7 @@ import pickle
 import multiprocessing
 import threading
 from cnsenti import Sentiment
+from snownlp import SnowNLP
 
 from Config import *
 
@@ -17,6 +18,13 @@ def emotionAnalysis(one_data, senti):
     except Exception as e:
         result = {'words': 0, 'sentences': 0, 'pos': 0, 'neg': 0}
         temp_dict[one_data[ARRAYID['docid']]] = result
+    # try:
+    #     s = SnowNLP(one_data[ARRAYID['content']])
+    #     score = s.sentiments
+    #     temp_dict[one_data[ARRAYID['docid']]] = score
+    # except Exception as e:
+    #     score = 0
+    #     temp_dict[one_data[ARRAYID['docid']]] = score
     return temp_dict
 
 class KeyThread(threading.Thread):
@@ -50,6 +58,7 @@ def thread_analysis(split_dataset, senti, map_emotion):
 
 def statisticalEmotions(dataset, analysis_emotion_filename):
     if not os.path.exists(analysis_emotion_filename):
+        # raise Exception("Error Not recommended! It takes too long.")
         if MULTI_MODE:
             print('[{}] This is the first time for emotion analysis in multiprocessing mode ...'.format(TIME()))
             cpu_cnt = multiprocessing.cpu_count()
@@ -89,7 +98,6 @@ def statisticalEmotions(dataset, analysis_emotion_filename):
                 except Exception as e:
                     result = {'words': 0, 'sentences': 0, 'pos': 0, 'neg': 0}
                     map_emotion[one[ARRAYID['docid']]] = result
-
         print()
         print('[{}] The length after analysis is {}. ...'.format(TIME(), len(map_emotion)))
         with open(analysis_emotion_filename, 'wb') as file:  # Save analysis results.
