@@ -31,18 +31,22 @@ def mainAnalysis():
     # print(len(map_nkey), wordclouddict)
     print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
     Keywords.visWordCloud(wordclouddict)
+
     print('[{}] {} -> Extracting the author of keywords ...'.format(TIME(), KEYSTR))
     author_key_dict = Keywords.extractInterestingKeywords(dataset, ARRAYID['author_type'])
-    print(author_key_dict)
-    # print(author_key_dict)
     # print('> Keyword Author : {}'.format(" ".join(author_key_dict.keys())))
-
     author_list = list(author_key_dict.keys())
     # print(type(author_list), author_list)
-    day_list, time_author_list = Keywords.timeAuthorAnalysis(dataset, author_list, KEY_AUTHORTIME_INTERVAL)
+    author_day_list, time_author_list = Keywords.timeDataAnalysis(dataset, author_list, ARRAYID['author_type'], KEY_TIME_INTERVAL)
     # for oneday in day_list:
     #     print(int(oneday[0:4]), int(oneday[4:6]), int(oneday[6:8]))
-    Keywords.visTimeData(day_list, time_author_list, author_list, "Total", KEY_VIS_AUTHOR_PATH)
+    Keywords.visTimeData(author_day_list, time_author_list, author_list, "Author Total", KEY_VIS_AUTHOR_PATH)
+
+    print('[{}] {} -> Extracting the publisher of keywords ...'.format(TIME(), KEYSTR))
+    publisher_key_dict = Keywords.extractInterestingKeywords(dataset, ARRAYID['pubname'])
+    publisher_list = list(publisher_key_dict.keys())
+    publisher_day_list, time_publisher_list = Keywords.timeDataAnalysis(dataset, publisher_list, ARRAYID['pubname'], KEY_TIME_INTERVAL)
+    Keywords.visTimeData(publisher_day_list, time_publisher_list, publisher_list, "Publisher Total", KEY_VIS_AUTHOR_PATH)
 
     # 3. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
@@ -50,10 +54,17 @@ def mainAnalysis():
     for idx, one in enumerate(gain_keywords):
         print('[{}] {} -> {}  Processing ...'.format(TIME(), CUSSTR, one))
         folderpath = Customized.preEnv(idx, one)
+        # author
         custom_dataset, map_correlate = Customized.customRelated(map_dataset, map_nkey, one)
-        cusone_day_list, cusone_time_author_list = Keywords.timeAuthorAnalysis(custom_dataset, author_list, KEY_AUTHORTIME_INTERVAL)
-        Keywords.visTimeData(cusone_day_list, cusone_time_author_list, author_list, one, folderpath + os.sep + KEY_AUTHORJPG)
+        cusone_author_day_list, cusone_time_author_list = Keywords.timeDataAnalysis(custom_dataset, author_list, ARRAYID['author_type'], KEY_TIME_INTERVAL)
+        Keywords.visTimeData(cusone_author_day_list, cusone_time_author_list, author_list, "Author:"+one, folderpath + os.sep + KEY_AUTHORJPG)
+        # publisher
+        cusone_publisher_day_list, cusone_time_publisher_list = Keywords.timeDataAnalysis(custom_dataset, publisher_list, ARRAYID['pubname'], KEY_TIME_INTERVAL)
+        Keywords.visTimeData(cusone_publisher_day_list, cusone_time_publisher_list, publisher_list, "Publisher:"+one, folderpath + os.sep + KEY_PUBLISHERJPG)
+        # print(len(cusone_publisher_day_list), len(cusone_time_publisher_list))
 
+        # Save data to .csv file.
+        Customized.dataSaveTocsv()
 
     gain_id_content = ['2020021100002988743', '2020021100000087375']
     docid_content = Preprocessing.getIDCont(map_dataset, gain_id_content)  # Get content from the docid list.

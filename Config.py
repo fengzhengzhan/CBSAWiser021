@@ -39,9 +39,11 @@ KEY_ANALUSIS_MODE = TFIDF  # TFIDF  TEXTRANK
 KEY_NKEY = 3  # the number of keywords to be extracted
 KEY_CLOUDNUM = 50  # Number of words drawn by the word cloud.
 KEY_CLOUD_PATH = ANALYSIS_PATH + os.sep + file_time + "wordcloud.png"
-KEY_AUTHORTIME_INTERVAL = 7  # Discourse author analysis interval.
+KEY_TIME_INTERVAL = 7  # Discourse author analysis interval.
 KEY_AUTHORJPG = "authortime.jpg"
 KEY_VIS_AUTHOR_PATH = ANALYSIS_PATH + os.sep + file_time + KEY_AUTHORJPG
+KEY_PUBLISHERJPG = "publishertime.jpg"
+KEY_VIS_PUBLISHER_PATH = ANALYSIS_PATH + os.sep + file_time + KEY_PUBLISHERJPG
 
 KEY_STOP_WORDS = []
 with open(DATA_PATH + os.sep + "StopWords.txt", 'r', encoding="utf-8") as f:

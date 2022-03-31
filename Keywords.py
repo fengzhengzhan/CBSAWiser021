@@ -176,16 +176,16 @@ def extractInterestingKeywords(dataset, coolid):
 
 
 # Plotting the percentage of speech in each camp according to the timeline
-def timeAuthorAnalysis(dataset, author_list, author_interval):
+def timeDataAnalysis(dataset, data_list, coolid, day_interval):
     first_date, second_date = None, None
-    dt = datetime.timedelta(days=author_interval)
+    dt = datetime.timedelta(days=day_interval)
     day_list = []
-    time_author_list = [author_list, ]  # Corresponding quantities sorted by time
+    time_data_list = [data_list, ]  # Corresponding quantities sorted by time
 
-    # Init the dict of author numbers.
-    author_num_dict = {}
-    for each in author_list:
-        author_num_dict[each] = 0
+    # Init the dict of data numbers.
+    data_num_dict = {}
+    for each in data_list:
+        data_num_dict[each] = 0
     # data loop
     i = -1
     while i < len(dataset)+1:  # Leave one left
@@ -202,26 +202,26 @@ def timeAuthorAnalysis(dataset, author_list, author_interval):
                 # print(first_date, second_date)
             # Determine time range
             if i < len(dataset) and first_date <= now_date <= second_date:
-                authortype = dataset[i][ARRAYID['author_type']]
-                if authortype == '':
-                    authortype = "匿名"
-                author_num_dict[authortype] += 1
+                type = dataset[i][coolid]
+                if type == '':
+                    type = "匿名"
+                data_num_dict[type] += 1
             else:
                 temp_num = []
-                for one in author_list:
-                    temp_num.append(author_num_dict[one])
-                time_author_list.append(temp_num)
+                for one in data_list:
+                    temp_num.append(data_num_dict[one])  # Guarantee order
+                time_data_list.append(temp_num)
                 day_list.append(str(second_date)[0:4]+str(second_date)[5:7]+str(second_date)[8:10])
-                # Init the dict of author numbers。
-                author_num_dict = {}
-                for each in author_list:
-                    author_num_dict[each] = 0
+                # Init the dict of data numbers。
+                data_num_dict = {}
+                for each in data_list:
+                    data_num_dict[each] = 0
                 first_date = second_date
                 second_date = second_date + dt
                 if i < len(dataset):
                     i -= 1
 
-    return day_list, time_author_list
+    return day_list, time_data_list
 
 
 # visualized data
