@@ -199,6 +199,7 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
             now_date = dataset[i][ARRAYID['pubdate']]
         # Determine if it is a time type
         if isinstance(now_date, datetime.datetime):
+            #print(i,now_date)
             if first_date is None:  # First time assignment
                 temp_date = str(now_date.year) + "-" + str(now_date.month) + "-" + str(now_date.day)
                 first_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")
@@ -228,8 +229,8 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
                     data_id_dict[each] = []
                 first_date = second_date
                 second_date = second_date + dt
-                print(second_date, "--------", dt)
-                if i < len(dataset):
+                #print(second_date, "--------", dt)
+                if i < len(dataset) and first_date <= now_date <= second_date:
                     i -= 1
 
     return day_list, time_data_list, time_id_list
