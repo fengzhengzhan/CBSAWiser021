@@ -228,6 +228,7 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
                     data_id_dict[each] = []
                 first_date = second_date
                 second_date = second_date + dt
+                print(second_date, "--------", dt)
                 if i < len(dataset):
                     i -= 1
 

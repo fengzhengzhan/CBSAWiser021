@@ -11,7 +11,7 @@ pip install numpy matplotlib pillow wordcloud imageio jieba snownlp itchat -i ht
 
 '''Global Parameters'''
 DEBUG = False  # debug mode
-VISUAL_SHOW = True  # Visualization
+VISUAL_SHOW = False  # Visualization
 VISUAL_SAVE = True
 MULTI_MODE = True  # Multiprocessing extract key words
 
