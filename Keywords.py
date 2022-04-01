@@ -181,11 +181,14 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
     dt = datetime.timedelta(days=day_interval)
     day_list = []
     time_data_list = [data_list, ]  # Corresponding quantities sorted by time
+    time_id_list = [data_list, ]
 
     # Init the dict of data numbers.
     data_num_dict = {}
+    data_id_dict = {}
     for each in data_list:
         data_num_dict[each] = 0
+        data_id_dict[each] = []
     # data loop
     i = -1
     while i < len(dataset)+1:  # Leave one left
@@ -206,23 +209,28 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
                 if type == '':
                     type = "匿名"
                 data_num_dict[type] += 1
+                data_id_dict[type].append(dataset[i][ARRAYID['docid']])
             else:
                 temp_num = []
+                temp_id = []
                 for one in data_list:
                     temp_num.append(data_num_dict[one])  # Guarantee order
+                    temp_id.append(data_id_dict[one])
                 time_data_list.append(temp_num)
+                time_id_list.append(temp_id)
                 day_list.append(str(second_date)[0:4]+str(second_date)[5:7]+str(second_date)[8:10])
                 # Init the dict of data numbers。
                 data_num_dict = {}
+                data_id_dict = {}
                 for each in data_list:
                     data_num_dict[each] = 0
+                    data_id_dict[each] = []
                 first_date = second_date
                 second_date = second_date + dt
                 if i < len(dataset):
                     i -= 1
 
-    return day_list, time_data_list
-
+    return day_list, time_data_list, time_id_list
 
 # visualized data
 def visTimeData(x_data, y_data, curves_num, title, data_path):

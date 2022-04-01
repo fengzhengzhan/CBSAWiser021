@@ -58,7 +58,6 @@ def thread_analysis(split_dataset, senti, map_emotion):
 
 def statisticalEmotions(dataset, analysis_emotion_filename):
     if not os.path.exists(analysis_emotion_filename):
-        # raise Exception("Error Not recommended! It takes too long.")
         if MULTI_MODE:
             print('[{}] This is the first time for emotion analysis in multiprocessing mode ...'.format(TIME()))
             cpu_cnt = multiprocessing.cpu_count()

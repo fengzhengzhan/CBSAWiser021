@@ -9,3 +9,6 @@ data/test.xlsx
 otherFunction/
 
 test.py
+
+!analysis/keywords_nkey_dict.pkl
+!analysis/emotion_dict.pkl

@@ -90,6 +90,8 @@ EMOTION_ANALYSIS = "emotionAnalysis"
 CUSSTR = "4 Customized"
 CUS_CSVFILENAME = "data.csv"
 
+CUS_CORRELATED_KEYNUMS = 3
+
 # debug
 if DEBUG:
     DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
