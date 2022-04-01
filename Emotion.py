@@ -133,6 +133,7 @@ def extrectAnalysisKeyWords(emode, exdict, numn, remove_words, weight_enable):
 
 
 # Traversing data for conditional analysis
+# conditionAnalysis(dataset, nkey_array, [TIME_ANALYSIS, EMOTION_ANALYSIS])
 def conditionAnalysis(dataset, nkey_array, mode):
     if mode:
         # Time analysis

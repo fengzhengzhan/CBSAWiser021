@@ -47,10 +47,18 @@ def getIdMap(dataset):
     return datasetmap
 
 
-def getIDCont(datasetmap, pre_id_cont):
+def getIDCont(map_dataset, pre_id_cont, coolid):
     temp_list = []
     for each in pre_id_cont:
-        temp_list.append(datasetmap[each])
+        temp_list.append(map_dataset[each][coolid])
     return temp_list
+
+# Data display preservation
+def saveToTxt(textlist, filename):
+    text = ""
+    for text_i in textlist:
+        text += str(text_i) + "\n\n"
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(text)
 
 

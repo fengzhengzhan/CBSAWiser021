@@ -11,7 +11,7 @@ pip install numpy matplotlib pillow wordcloud imageio jieba snownlp itchat -i ht
 
 '''Global Parameters'''
 DEBUG = False  # debug mode
-VISUAL_SHOW = False  # Visualization
+VISUAL_SHOW = True  # Visualization
 VISUAL_SAVE = True
 MULTI_MODE = True  # Multiprocessing extract key words
 
@@ -91,6 +91,7 @@ CUSSTR = "4 Customized"
 CUS_CSVFILENAME = "data.csv"
 
 CUS_CORRELATED_KEYNUMS = 3
+CUS_CONTFILENAME = "cont.txt"
 
 # debug
 if DEBUG:

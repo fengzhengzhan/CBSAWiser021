@@ -177,7 +177,8 @@ def extractInterestingKeywords(dataset, coolid):
 
 # Plotting the percentage of speech in each camp according to the timeline
 def timeDataAnalysis(dataset, data_list, coolid, day_interval):
-    first_date, second_date = None, None
+    first_date = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+    second_date = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
     dt = datetime.timedelta(days=day_interval)
     day_list = []
     time_data_list = [data_list, ]  # Corresponding quantities sorted by time

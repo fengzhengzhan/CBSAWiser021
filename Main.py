@@ -15,7 +15,7 @@ def mainAnalysis():
     print('[{}] {} -> File reading in progress (6s) ...'.format(TIME(), PRESTR))
     dataset: list[list] = Preprocessing.readPklFile(DATA_SAVE_FILENAME)  # This function reads data in excel and returns the file data in 6s
     map_dataset = Preprocessing.getIdMap(dataset)
-    # print(docid_content)
+    # print(docid_cont_list)
     print('[{}] {} -> Keyword extraction of data ...'.format(TIME(), PRESTR))
     # print(dataset[1], type(dataset))
 
@@ -44,7 +44,7 @@ def mainAnalysis():
     publisher_key_dict = Keywords.extractInterestingKeywords(dataset, ARRAYID['pubname'])
     publisher_list = list(publisher_key_dict.keys())
     publisher_day_list, time_publisher_list, time_publisherid_list = Keywords.timeDataAnalysis(dataset, publisher_list, ARRAYID['pubname'], KEY_TIME_INTERVAL)
-    Keywords.visTimeData(publisher_day_list, time_publisher_list, publisher_list, "Publisher Total", KEY_VIS_AUTHOR_PATH)
+    Keywords.visTimeData(publisher_day_list, time_publisher_list, publisher_list, "Publisher Total", KEY_VIS_PUBLISHER_PATH)
 
     # 3. Emotion
     if os.path.exists(EMO_FILENAME):
@@ -53,12 +53,10 @@ def mainAnalysis():
     else:
         print('[{}] {} -> Not recommended! It takes too long ...'.format(TIME(), EMOSTR))
 
-
-
-
     # 4. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
-    gain_keywords = ["新冠", "檢測", "中國", "口罩", "經濟"]
+    #　todo
+    gain_keywords = ["新冠", "檢測", "中國", "口罩", "經濟", "香港", "疫情", "疫苗"]
     for idx, onekey in enumerate(gain_keywords):
         print('[{}] {} -> {}  Processing ...'.format(TIME(), CUSSTR, onekey))
         folderpath = Customized.preEnv(idx, onekey)
@@ -75,6 +73,7 @@ def mainAnalysis():
         # print(len(cusone_publisher_day_list), len(cusone_time_publisher_list))
 
         # Emotion
+        # Sampling
 
         # Correlated Keywords
         correlate_list, correlateid_set = Customized.customDayKeyword(map_nkey, cusone_author_day_list, cusone_time_authorid_list)
@@ -124,9 +123,10 @@ def mainAnalysis():
         # Save data to .csv file.
         Customized.dataSaveTocsv(headers, values, folderpath + os.sep + CUS_CSVFILENAME)
 
-        docid_content = Preprocessing.getIDCont(map_dataset, correlateid_set)  # Get content from the docid list.
-    #
-    #
+        docid_cont_list = Preprocessing.getIDCont(map_dataset, correlateid_set, ARRAYID['content'])  # Get content from the docid list.
+        # Not recommended! It takes too long ...
+        # Preprocessing.saveToTxt(docid_cont_list, folderpath + os.sep + CUS_CONTFILENAME)
+
     # # Emotion
     # print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))
     # Emotion.statisticalEmotions(dataset, EMO_FILENAME)
@@ -134,18 +134,6 @@ def mainAnalysis():
     # if len(dataset) != len(map_emotion):
     #     raise Exception("Error -> Errors in data processing, inconsistent lengths！")
     # print('[{}] {} -> Logistic regression ...'.format(TIME(), EMOSTR))
-
-
-
-    # # dataset sort according to time
-    # # 1. Keyword analysis by time ()
-    # print('[{}] Step 1: Time analysis of data ...'.format(TIME()))
-    # print('[{}] Step 2: Emotion analysis of data ...'.format(TIME()))
-    # print('[{}] Step 3: Keyword extraction and filtering ...'.format(TIME()))
-    # conditionAnalysis(dataset, nkey_array, [TIME_ANALYSIS, EMOTION_ANALYSIS])
-    #
-    # print("\n", '[{}] Keyword Time Analysis ...'.format(TIME()))
-    # print(INTERESTING_TEXT)
 
     print(" ----------- End of data analysis ----------- ")
 
