@@ -32,6 +32,7 @@ def mainAnalysis():
     print('[{}] {} -> Word cloud analysis of data ...'.format(TIME(), KEYSTR))
     Keywords.visWordCloud(wordclouddict)
 
+    # author
     print('[{}] {} -> Extracting the author of keywords ...'.format(TIME(), KEYSTR))
     author_key_dict = Keywords.extractInterestingKeywords(dataset, ARRAYID['author_type'])
     # print('> Keyword Author : {}'.format(" ".join(author_key_dict.keys())))
@@ -40,6 +41,7 @@ def mainAnalysis():
     author_day_list, time_author_list, time_authorid_list = Keywords.timeDataAnalysis(dataset, author_list, ARRAYID['author_type'], KEY_TIME_INTERVAL)
     Keywords.visTimeData(author_day_list, time_author_list, author_list, "Author Total", KEY_VIS_AUTHOR_PATH)
 
+    # pulisher
     print('[{}] {} -> Extracting the publisher of keywords ...'.format(TIME(), KEYSTR))
     publisher_key_dict = Keywords.extractInterestingKeywords(dataset, ARRAYID['pubname'])
     publisher_list = list(publisher_key_dict.keys())
@@ -55,11 +57,13 @@ def mainAnalysis():
 
     # 4. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
-    #　todo
-    gain_keywords = ["新冠", "檢測", "中國", "口罩", "經濟", "香港", "疫情", "疫苗"]
-    for idx, onekey in enumerate(gain_keywords):
+    gain_keywords = ["中國", "口罩", "經濟"]
+    onekey_daylist = []
+    onekey_timelist = None
+    # one keyword numbers
+    for key_i, onekey in enumerate(gain_keywords):
         print('[{}] {} -> {}  Processing ...'.format(TIME(), CUSSTR, onekey))
-        folderpath = Customized.preEnv(idx, onekey)
+        folderpath = Customized.preEnv(key_i, onekey)
 
         # author
         custom_dataset, map_correlate = Customized.customRelated(map_dataset, map_nkey, onekey)
@@ -72,8 +76,7 @@ def mainAnalysis():
         Keywords.visTimeData(cusone_publisher_day_list, cusone_time_publisher_list, publisher_list, "Publisher:"+onekey, folderpath + os.sep + KEY_PUBLISHERJPG)
         # print(len(cusone_publisher_day_list), len(cusone_time_publisher_list))
 
-        # Emotion
-        # Sampling
+        # Emotion: Sampling
 
         # Correlated Keywords
         correlate_list, correlateid_set = Customized.customDayKeyword(map_nkey, cusone_author_day_list, cusone_time_authorid_list)
@@ -88,23 +91,37 @@ def mainAnalysis():
         values = []
 
         day_list = cusone_author_day_list
-        for idx, oneday in enumerate(day_list):
+        # Initial onekey_timelist
+        if onekey_timelist == None:
+            onekey_daylist = day_list
+            onekey_timelist = []
+            onekey_timelist.append(gain_keywords)
+            for d_i in range(0, len(day_list)):
+                temp = []
+                for k_i in range(0, len(gain_keywords)):
+                    temp.append(0)
+                onekey_timelist.append(temp)
+
+        for day_i, oneday in enumerate(day_list):
             temp = []
             temp.append(int(oneday[0:4]))
             temp.append(int(oneday[4:6]))
             temp.append(int(oneday[6:8]))
 
-            temp += cusone_time_author_list[idx+1]
-            temp += [sum(cusone_time_author_list[idx+1])]
+            temp += cusone_time_author_list[day_i+1]
+            temp += [sum(cusone_time_author_list[day_i+1])]
 
-            temp += cusone_time_publisher_list[idx+1]
-            temp += [sum(cusone_time_publisher_list[idx+1])]
+            temp += cusone_time_publisher_list[day_i+1]
+            temp += [sum(cusone_time_publisher_list[day_i+1])]
 
-            # print(correlate_list[idx])
-            correlate_oneday_dict = correlate_list[idx]
+            # print(correlate_list[day_i])
+            correlate_oneday_dict = correlate_list[day_i]
             # print(type(correlate_oneday_dict), correlate_oneday_dict)
             if onekey in correlate_oneday_dict:
-                correlate_oneday_dict.pop(onekey)
+                try:
+                    onekey_timelist[day_i+1][key_i] = correlate_oneday_dict.pop(onekey)
+                except:
+                    pass
             temp += [len(correlate_oneday_dict)]
 
             for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
@@ -126,6 +143,9 @@ def mainAnalysis():
         docid_cont_list = Preprocessing.getIDCont(map_dataset, correlateid_set, ARRAYID['content'])  # Get content from the docid list.
         # Not recommended! It takes too long ...
         # Preprocessing.saveToTxt(docid_cont_list, folderpath + os.sep + CUS_CONTFILENAME)
+
+    # One Key numbers list
+    Keywords.visTimeData(onekey_daylist, onekey_timelist, gain_keywords, "Keywords Total", CUS_VIS_ONEKEY_PATH)
 
     # # Emotion
     # print('[{}] {} -> Statistical emotions ...'.format(TIME(), EMOSTR))

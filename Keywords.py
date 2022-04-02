@@ -237,6 +237,15 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
 
 # visualized data
 def visTimeData(x_data, y_data, curves_num, title, data_path):
+    """
+
+    :param x_data: day  list[day1, day2]
+    :param y_data: data  list[[headers], day1[c1,c2,c3...cn], day2[c1,c2,c3...cn]]
+    :param curves_num: curves nums
+    :param title:
+    :param data_path:
+    :return:
+    """
     if VISUAL_SAVE:
         # print(plt_list)
         # Folding Line Chart

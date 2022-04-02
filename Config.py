@@ -93,6 +93,9 @@ CUS_CSVFILENAME = "data.csv"
 CUS_CORRELATED_KEYNUMS = 3
 CUS_CONTFILENAME = "cont.txt"
 
+CUS_ONEKEYJPG = "onekey.jpg"
+CUS_VIS_ONEKEY_PATH = ANALYSIS_PATH + os.sep + file_time + CUS_ONEKEYJPG
+
 # debug
 if DEBUG:
     DATA_FILENAME = DATA_PATH + os.sep + "test.xlsx"
