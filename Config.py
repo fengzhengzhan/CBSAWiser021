@@ -12,7 +12,7 @@ pip install numpy matplotlib pillow wordcloud imageio jieba snownlp itchat -i ht
 '''Global Parameters'''
 DEBUG = False  # debug mode
 VISUAL_SHOW = False  # Visualization
-VISUAL_SAVE = True
+VISUAL_SAVE = False
 MULTI_MODE = True  # Multiprocessing extract key words
 
 ARRAYID = {'docid':0, 'comment_count':1, 'like_count':2, 'dislike_count':3, 'love_count':4, 'haha_count':5, 'wow_count':6, 'angry_count':7, 'sad_count':8, 'share_count':9, 'view_count':10, 'negativeemo_count':11, 'positiveemo_count':12, 'influence_count':13, 'headline':14, 'author*':15, 'pubname':16, 'pubdate':17, 'region':18, 'fans_count':19, 'author_type':20, 'content':21}  # 字典 便于访问字段对应的列
@@ -58,6 +58,8 @@ INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""
 
+EMO_SAMPLE_NUMS = 3000
+EMO_SAMPLE_FILENAME = "sample_key.pkl"
 
 # Analysis by time
 TIME_MODE = "time_mode"
@@ -80,7 +82,6 @@ EMO_EACH_LINE = 1  # Number of keywords extracted from each line of data  Range:
 EACH_EMO_N = 50
 ENABLE_EMO_WEIGHT = True  # Whether to allow weighting, only return the results that have specified keyword(s)
 EMO_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "emo_analysis.txt"
-
 
 # Conditional Analysis
 TIME_ANALYSIS = "timeAnalysis"

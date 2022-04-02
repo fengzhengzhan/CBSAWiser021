@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import random
+
 from Config import *
 import Emotion
 import Keywords
@@ -76,20 +78,6 @@ def mainAnalysis():
         Keywords.visTimeData(cusone_publisher_day_list, cusone_time_publisher_list, publisher_list, "Publisher:"+onekey, folderpath + os.sep + KEY_PUBLISHERJPG)
         # print(len(cusone_publisher_day_list), len(cusone_time_publisher_list))
 
-        # Emotion: Sampling
-
-        # Correlated Keywords
-        correlate_list, correlateid_set = Customized.customDayKeyword(map_nkey, cusone_author_day_list, cusone_time_authorid_list)
-
-        # Prepare data
-        headers = ["year", "month", "day"]\
-                  + cusone_time_author_list[0] + ["author_total"]\
-                  + cusone_time_publisher_list[0] + ["publisher_total"]\
-                  + ["keywords_total"]
-        for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
-            headers += ["correlation_keyword"+str(corkey_i), "correlation_value"+str(corkey_i)]
-        values = []
-
         day_list = cusone_author_day_list
         # Initial onekey_timelist
         if onekey_timelist == None:
@@ -102,6 +90,47 @@ def mainAnalysis():
                     temp.append(0)
                 onekey_timelist.append(temp)
 
+        # Emotion: Sampling
+        emo_day_num = EMO_SAMPLE_NUMS // len(day_list)
+        emo_curves_num = ["pos", "neg", "neu"]
+        emo_timelist = [emo_curves_num, ]
+        for authorid_i in cusone_time_authorid_list[1:]:
+            sumoneday = 0
+            emo_timedict = {"pos": 0, "neg": 0, "neu": 0}
+            for auidone_j in authorid_i:  # array
+                sumoneday += len(auidone_j)
+            if sumoneday != 0:  # Skip empty arrays
+                for auidone_j in authorid_i:  # array
+                    sample_nums = int((len(auidone_j) / sumoneday) * emo_day_num)
+                    sample_nums = min(len(auidone_j), sample_nums)
+                    samples = random.sample(auidone_j, sample_nums)  # No duplicate sampling
+                    samples_dataset = []
+                    for sam_k in samples:
+                        samples_dataset.append(map_dataset[sam_k])
+                    Emotion.statisticalEmotions(samples_dataset, folderpath + os.sep + EMO_SAMPLE_FILENAME)
+                    emotion_dict = Preprocessing.readPklFile(folderpath + os.sep + EMO_SAMPLE_FILENAME)
+                    for emo_key, emo_val in emotion_dict:
+                        if emo_val["pos"] > emo_val["neg"]:
+                            emo_timedict["pos"] += 1
+                        elif emo_val["pos"] < emo_val["neg"]:
+                            emo_timedict["neg"] += 1
+                        elif emo_val["pos"] == emo_val["neg"]:
+                            emo_timedict["neu"] += 1
+            emo_timelist.append([emo_timedict["pos"], emo_timedict["neg"], emo_timedict["neu"]])
+        Keywords.visTimeData(day_list, emo_timelist, emo_curves_num, "Emotion:"+onekey, folderpath + os.sep + CUS_ONEKEYJPG)
+
+
+        # Correlated Keywords
+        correlate_list, correlateid_set = Customized.customDayKeyword(map_nkey, cusone_author_day_list, cusone_time_authorid_list)
+
+        # Prepare data
+        headers = ["year", "month", "day"]\
+                  + cusone_time_author_list[0] + ["author_total"]\
+                  + cusone_time_publisher_list[0] + ["publisher_total"]\
+                  + ["keywords_total"]
+        for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
+            headers += ["correlation_keyword"+str(corkey_i), "correlation_value"+str(corkey_i)]
+        values = []
         for day_i, oneday in enumerate(day_list):
             temp = []
             temp.append(int(oneday[0:4]))

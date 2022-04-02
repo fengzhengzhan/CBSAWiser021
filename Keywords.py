@@ -181,8 +181,8 @@ def timeDataAnalysis(dataset, data_list, coolid, day_interval):
     second_date = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
     dt = datetime.timedelta(days=day_interval)
     day_list = []
-    time_data_list = [data_list, ]  # Corresponding quantities sorted by time
-    time_id_list = [data_list, ]
+    time_data_list = [data_list, ]  # [data_list, [c1,c2,c3..cn]] Corresponding quantities sorted by time
+    time_id_list = [data_list, ]  # [data_list, [[docid1,docid2],[docid1,docid2],[docid1,docid2]]]
 
     # Init the dict of data numbers.
     data_num_dict = {}
