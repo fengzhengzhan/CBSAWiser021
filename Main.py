@@ -108,6 +108,7 @@ def mainAnalysis():
                     for sam_k in samples:
                         samples_dataset.append(map_dataset[sam_k])
                     if len(samples_dataset) > 0:
+                        # todo 太耗时 使用长度调度 一次处理3000个数据
                         emotion_dict = Emotion.statisticalEmotions(samples_dataset, folderpath + os.sep + EMO_SAMPLE_FILENAME, ret_res=True)
                         for emo_key, emo_val in emotion_dict.items():
                             if emo_val["pos"] > emo_val["neg"]:
