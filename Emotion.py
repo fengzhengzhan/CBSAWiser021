@@ -56,8 +56,8 @@ def thread_analysis(split_dataset, senti, map_emotion):
             map_emotion[k] = v
 
 
-def statisticalEmotions(dataset, analysis_emotion_filename):
-    if not os.path.exists(analysis_emotion_filename):
+def statisticalEmotions(dataset, analysis_emotion_filename, ret_res=False):
+    if not os.path.exists(analysis_emotion_filename) or ret_res:
         if MULTI_MODE:
             print('[{}] This is the first time for emotion analysis in multiprocessing mode ...'.format(TIME()))
             cpu_cnt = multiprocessing.cpu_count()
@@ -99,8 +99,11 @@ def statisticalEmotions(dataset, analysis_emotion_filename):
                     map_emotion[one[ARRAYID['docid']]] = result
         print()
         print('[{}] The length after analysis is {}. ...'.format(TIME(), len(map_emotion)))
-        with open(analysis_emotion_filename, 'wb') as file:  # Save analysis results.
-            pickle.dump(map_emotion, file)
+        if ret_res:
+            return map_emotion
+        else:
+            with open(analysis_emotion_filename, 'wb') as file:  # Save analysis results.
+                pickle.dump(map_emotion, file)
 
 
 # Data display preservation

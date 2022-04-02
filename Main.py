@@ -107,15 +107,15 @@ def mainAnalysis():
                     samples_dataset = []
                     for sam_k in samples:
                         samples_dataset.append(map_dataset[sam_k])
-                    Emotion.statisticalEmotions(samples_dataset, folderpath + os.sep + EMO_SAMPLE_FILENAME)
-                    emotion_dict = Preprocessing.readPklFile(folderpath + os.sep + EMO_SAMPLE_FILENAME)
-                    for emo_key, emo_val in emotion_dict:
-                        if emo_val["pos"] > emo_val["neg"]:
-                            emo_timedict["pos"] += 1
-                        elif emo_val["pos"] < emo_val["neg"]:
-                            emo_timedict["neg"] += 1
-                        elif emo_val["pos"] == emo_val["neg"]:
-                            emo_timedict["neu"] += 1
+                    if len(samples_dataset) > 0:
+                        emotion_dict = Emotion.statisticalEmotions(samples_dataset, folderpath + os.sep + EMO_SAMPLE_FILENAME, ret_res=True)
+                        for emo_key, emo_val in emotion_dict.items():
+                            if emo_val["pos"] > emo_val["neg"]:
+                                emo_timedict["pos"] += 1
+                            elif emo_val["pos"] < emo_val["neg"]:
+                                emo_timedict["neg"] += 1
+                            elif emo_val["pos"] == emo_val["neg"]:
+                                emo_timedict["neu"] += 1
             emo_timelist.append([emo_timedict["pos"], emo_timedict["neg"], emo_timedict["neu"]])
         Keywords.visTimeData(day_list, emo_timelist, emo_curves_num, "Emotion:"+onekey, folderpath + os.sep + CUS_ONEKEYJPG)
 
@@ -127,7 +127,8 @@ def mainAnalysis():
         headers = ["year", "month", "day"]\
                   + cusone_time_author_list[0] + ["author_total"]\
                   + cusone_time_publisher_list[0] + ["publisher_total"]\
-                  + ["keywords_total"]
+                  + ["keywords_total"]\
+                  + ["pos_count", "neg_count", "neu_count", "emo_score"]
         for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
             headers += ["correlation_keyword"+str(corkey_i), "correlation_value"+str(corkey_i)]
         values = []
@@ -152,6 +153,16 @@ def mainAnalysis():
                 except:
                     pass
             temp += [len(correlate_oneday_dict)]
+
+            # Emotion
+            pos_count = emo_timelist[day_i + 1][0]
+            neg_count = emo_timelist[day_i + 1][1]
+            posaneg_count = pos_count+neg_count
+            neu_count = emo_timelist[day_i + 1][2]
+            score = 0
+            if posaneg_count > 0:
+                score = pos_count/posaneg_count - neg_count/posaneg_count
+            temp += [pos_count, neg_count, neu_count, score]
 
             for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
                 if len(correlate_oneday_dict) > 0:
