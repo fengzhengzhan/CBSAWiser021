@@ -60,6 +60,7 @@ INTERESTING_TEXT = ""
 
 EMO_SAMPLE_NUMS = 3000
 EMO_SAMPLE_FILENAME = "sample_key.pkl"
+EMO_ONEKEYJPG = "onekey_emotion.jpg"
 
 # Analysis by time
 TIME_MODE = "time_mode"

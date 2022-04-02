@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import math
 import random
 
 from Config import *
@@ -92,34 +93,43 @@ def mainAnalysis():
 
         # Emotion: Sampling
         emo_day_num = EMO_SAMPLE_NUMS // len(day_list)
-        emo_curves_num = ["pos", "neg", "neu"]
-        emo_timelist = [emo_curves_num, ]
+
+        daysamid_dataset = []
+        allsample_dataset = []
         for authorid_i in cusone_time_authorid_list[1:]:
             sumoneday = 0
-            emo_timedict = {"pos": 0, "neg": 0, "neu": 0}
             for auidone_j in authorid_i:  # array
                 sumoneday += len(auidone_j)
-            if sumoneday != 0:  # Skip empty arrays
+            samples_dataset = []
+            if sumoneday > 0:  # Skip empty arrayss
                 for auidone_j in authorid_i:  # array
-                    sample_nums = int((len(auidone_j) / sumoneday) * emo_day_num)
+                    sample_nums = math.ceil((len(auidone_j) / sumoneday) * emo_day_num)
                     sample_nums = min(len(auidone_j), sample_nums)
                     samples = random.sample(auidone_j, sample_nums)  # No duplicate sampling
-                    samples_dataset = []
                     for sam_k in samples:
-                        samples_dataset.append(map_dataset[sam_k])
-                    if len(samples_dataset) > 0:
-                        # todo 太耗时 使用长度调度 一次处理3000个数据
-                        emotion_dict = Emotion.statisticalEmotions(samples_dataset, folderpath + os.sep + EMO_SAMPLE_FILENAME, ret_res=True)
-                        for emo_key, emo_val in emotion_dict.items():
-                            if emo_val["pos"] > emo_val["neg"]:
-                                emo_timedict["pos"] += 1
-                            elif emo_val["pos"] < emo_val["neg"]:
-                                emo_timedict["neg"] += 1
-                            elif emo_val["pos"] == emo_val["neg"]:
-                                emo_timedict["neu"] += 1
-            emo_timelist.append([emo_timedict["pos"], emo_timedict["neg"], emo_timedict["neu"]])
-        Keywords.visTimeData(day_list, emo_timelist, emo_curves_num, "Emotion:"+onekey, folderpath + os.sep + CUS_ONEKEYJPG)
+                        samples_dataset.append(map_dataset[sam_k][ARRAYID['docid']])
+                        allsample_dataset.append(map_dataset[sam_k])
+            daysamid_dataset.append(samples_dataset)
 
+        # print(len(day_list), len(daysamid_dataset))
+        # Analysis emotion
+        Emotion.statisticalEmotions(allsample_dataset, folderpath + os.sep + EMO_SAMPLE_FILENAME)
+        one_emotion_dict = Preprocessing.readPklFile(folderpath + os.sep + EMO_SAMPLE_FILENAME)
+
+        emo_curves_num = ["pos", "neg", "neu"]
+        emo_timelist = [emo_curves_num, ]
+        for daysamarr_i in daysamid_dataset:
+            emo_timedict = {"pos": 0, "neg": 0, "neu": 0}
+            for sam_j in daysamarr_i:
+                emo_val = one_emotion_dict[sam_j]
+                if emo_val["pos"] > emo_val["neg"]:
+                    emo_timedict["pos"] += 1
+                elif emo_val["pos"] < emo_val["neg"]:
+                    emo_timedict["neg"] += 1
+                elif emo_val["pos"] == emo_val["neg"]:
+                    emo_timedict["neu"] += 1
+            emo_timelist.append([emo_timedict["pos"], emo_timedict["neg"], emo_timedict["neu"]])
+        Keywords.visTimeData(day_list, emo_timelist, emo_curves_num, "Emotion:"+onekey, folderpath + os.sep + EMO_ONEKEYJPG)
 
         # Correlated Keywords
         correlate_list, correlateid_set = Customized.customDayKeyword(map_nkey, cusone_author_day_list, cusone_time_authorid_list)
