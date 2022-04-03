@@ -12,13 +12,14 @@ def preEnv(index, folderWord):
         os.mkdir(folderpath)
     return folderpath
 
-def customRelated(map_dataset, map_nkey, onekey):
+def customRelated(dataset, map_dataset, map_nkey, onekey):
     custom_dataset = []
     map_correlate = {}
-    for k, v in map_nkey.items():
-        if onekey in v:
-            custom_dataset.append(map_dataset[k])
-            for eachv in v:
+    for onedate in dataset:
+        keyvalue = map_nkey[onedate[ARRAYID['docid']]]
+        if onekey in keyvalue:
+            custom_dataset.append(onedate)
+            for eachv in keyvalue:
                 if eachv not in map_correlate:
                     map_correlate[eachv] = 1
                 else:

@@ -69,7 +69,7 @@ def mainAnalysis():
         folderpath = Customized.preEnv(key_i, onekey)
 
         # author
-        custom_dataset, map_correlate = Customized.customRelated(map_dataset, map_nkey, onekey)
+        custom_dataset, map_correlate = Customized.customRelated(dataset, map_dataset, map_nkey, onekey)
         map_correlate.pop(onekey)
         cusone_author_day_list, cusone_time_author_list, cusone_time_authorid_list = Keywords.timeDataAnalysis(custom_dataset, author_list, ARRAYID['author_type'], KEY_TIME_INTERVAL)
         Keywords.visTimeData(cusone_author_day_list, cusone_time_author_list, author_list, "Author:"+onekey, folderpath + os.sep + KEY_AUTHORJPG)
@@ -94,6 +94,8 @@ def mainAnalysis():
         # Emotion: Sampling
         emo_day_num = EMO_SAMPLE_NUMS // len(day_list)
 
+        print(EMO_SAMPLE_NUMS, len(day_list), EMO_SAMPLE_NUMS // len(day_list))
+
         daysamid_dataset = []
         allsample_dataset = []
         for authorid_i in cusone_time_authorid_list[1:]:
@@ -103,6 +105,7 @@ def mainAnalysis():
             samples_dataset = []
             if sumoneday > 0:  # Skip empty arrayss
                 for auidone_j in authorid_i:  # array
+                    # print(auidone_j)
                     sample_nums = math.ceil((len(auidone_j) / sumoneday) * emo_day_num)
                     sample_nums = min(len(auidone_j), sample_nums)
                     samples = random.sample(auidone_j, sample_nums)  # No duplicate sampling
