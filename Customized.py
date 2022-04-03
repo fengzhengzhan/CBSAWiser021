@@ -48,7 +48,7 @@ def customDayKeyword(map_nkey: 'dict[docid:[n_keywords]]', day_list, id_list):
     return correlate_list, correlateid_set
 
 def dataSaveTocsv(headers, values, filepath):
-    with open(filepath, "w", newline='') as fp:
+    with open(filepath, "w", newline='', encoding='utf-8_sig') as fp:
         writer = csv.writer(fp)
         writer.writerow(headers)
         writer.writerows(values)
