@@ -93,8 +93,7 @@ def mainAnalysis():
 
         # Emotion: Sampling
         emo_day_num = EMO_SAMPLE_NUMS // len(day_list)
-
-        print(EMO_SAMPLE_NUMS, len(day_list), EMO_SAMPLE_NUMS // len(day_list))
+        # print(EMO_SAMPLE_NUMS, len(day_list), EMO_SAMPLE_NUMS // len(day_list))
 
         daysamid_dataset = []
         allsample_dataset = []
