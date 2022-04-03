@@ -90,7 +90,7 @@ EMOTION_ANALYSIS = "emotionAnalysis"
 
 '''Customized'''
 CUSSTR = "4 Customized"
-CUS_CSVFILENAME = "data.csv"
+CUS_CSVFILENAME = ".csv"
 
 CUS_CORRELATED_KEYNUMS = 3
 CUS_CONTFILENAME = "cont.txt"

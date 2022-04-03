@@ -191,7 +191,7 @@ def mainAnalysis():
 
         # print(headers, len(headers), len(values))
         # Save data to .csv file.
-        Customized.dataSaveTocsv(headers, values, folderpath + os.sep + CUS_CSVFILENAME)
+        Customized.dataSaveTocsv(headers, values, folderpath + os.sep + onekey + CUS_CSVFILENAME)
 
         docid_cont_list = Preprocessing.getIDCont(map_dataset, correlateid_set, ARRAYID['content'])  # Get content from the docid list.
         # Not recommended! It takes too long ...
