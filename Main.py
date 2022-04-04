@@ -133,6 +133,11 @@ def mainAnalysis():
             emo_timelist.append([emo_timedict["pos"], emo_timedict["neg"], emo_timedict["neu"]])
         Keywords.visTimeData(day_list, emo_timelist, emo_curves_num, "Emotion:"+onekey, folderpath + os.sep + EMO_ONEKEYJPG)
 
+        # Manual Emotion
+        manual_emo_list = [MANUAL_POSNUM, MANUAL_NEGNUM, MANUAL_EQUNUM]
+        manual_emo_day_list, manual_time_emo_list, manual_emoid_list = Emotion.timeEmotionCountAnalysis(custom_dataset, manual_emo_list, KEY_TIME_INTERVAL)
+        Keywords.visTimeData(manual_emo_day_list, manual_time_emo_list, manual_emo_list, "Manual Emotion:" + onekey, folderpath + os.sep + EMO_MANUAL_JPG)
+
         # Correlated Keywords
         correlate_list, correlateid_set = Customized.customDayKeyword(map_nkey, cusone_author_day_list, cusone_time_authorid_list)
 
@@ -141,7 +146,8 @@ def mainAnalysis():
                   + cusone_time_author_list[0] + ["author_total"]\
                   + cusone_time_publisher_list[0] + ["publisher_total"]\
                   + ["keywords_total"]\
-                  + ["pos_count", "neg_count", "neu_count", "emo_score"]
+                  + ["pos_count", "neg_count", "neu_count", "emo_score"]\
+                  + manual_emo_list + ["manualemo_score"]
         for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
             headers += ["correlation_keyword"+str(corkey_i), "correlation_value"+str(corkey_i)]
         values = []
@@ -177,6 +183,17 @@ def mainAnalysis():
                 score = pos_count/posaneg_count - neg_count/posaneg_count
             temp += [pos_count, neg_count, neu_count, score]
 
+            # Manual Emotion
+            manual_pos = manual_time_emo_list[day_i+1][0]
+            manual_neg = manual_time_emo_list[day_i+1][1]
+            manual_equ = manual_time_emo_list[day_i+1][2]
+            man_posaneg = manual_pos + manual_neg
+            manual_emoscore = 0
+            if man_posaneg > 0:
+                manual_emoscore = manual_pos/man_posaneg - manual_neg/man_posaneg
+            temp += [manual_pos, manual_neg, manual_equ, manual_emoscore]
+
+            # Correlate Keywords
             for corkey_i in range(0, CUS_CORRELATED_KEYNUMS):
                 if len(correlate_oneday_dict) > 0:
                     max_key = max(correlate_oneday_dict, key=correlate_oneday_dict.get)

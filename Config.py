@@ -62,6 +62,8 @@ EMO_SAMPLE_NUMS = 3000
 EMO_SAMPLE_FILENAME = "sample_key.pkl"
 EMO_ONEKEYJPG = "onekey_emotion.jpg"
 
+EMO_MANUAL_JPG = "manual_emotion.jpg"
+
 # Analysis by time
 TIME_MODE = "time_mode"
 TIME_INTERVAL = 30  # days interval of analysis
@@ -72,9 +74,9 @@ TIME_TXT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "time_analysis.txt"
 # Emotion analysis
 EMO_MODE = "emo_mode"
 ZEROEQUNUM = 'zeroequnum' # Result displayed
-EQUNUM = 'equnum'
-POSNUM = 'posnum'
-NEGNUM = 'negnum'
+MANUAL_POSNUM = 'manual_pos'
+MANUAL_NEGNUM = 'manual_neg'
+MANUAL_EQUNUM = 'manual_equ'
 ZEROEQU = 'zeroequ'
 EQU = 'equ'
 POS = 'pos'

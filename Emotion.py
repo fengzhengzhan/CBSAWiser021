@@ -106,6 +106,71 @@ def statisticalEmotions(dataset, analysis_emotion_filename, ret_res=False):
                 pickle.dump(map_emotion, file)
 
 
+# Plotting the percentage of speech in each camp according to the timeline
+def timeEmotionCountAnalysis(dataset, data_list, day_interval):
+    first_date = None
+    second_date = None
+    dt = datetime.timedelta(days=day_interval)
+    day_list = []
+    manual_emo_list = [data_list, ]
+    data_id_list = [data_list, ]
+
+    # Init the dict of data numbers.
+    emo_num_dict = {}
+    data_id_dict = {}
+    for each in data_list:
+        emo_num_dict[each] = 0
+        data_id_dict[each] = []
+    # data loop
+    i = -1
+    while i < len(dataset)+1:  # Leave one left
+        i += 1
+        # Time analysis
+        if i < len(dataset):
+            now_date = dataset[i][ARRAYID['pubdate']]
+        # Determine if it is a time type
+        if isinstance(now_date, datetime.datetime):
+            #print(i,now_date)
+            if first_date is None:  # First time assignment
+                temp_date = str(now_date.year) + "-" + str(now_date.month) + "-" + str(now_date.day)
+                first_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d")
+                second_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d") + dt
+                # print(first_date, second_date)
+            # Determine time range
+            if i < len(dataset) and first_date <= now_date <= second_date:
+                positiveemo_count = dataset[i][ARRAYID['positiveemo_count']]
+                negativeemo_count = dataset[i][ARRAYID['negativeemo_count']]
+                # Result counts
+                if positiveemo_count > negativeemo_count:
+                    emo_num_dict[MANUAL_POSNUM] += 1
+                elif positiveemo_count < negativeemo_count:
+                    emo_num_dict[MANUAL_NEGNUM] += 1
+                elif positiveemo_count == negativeemo_count and positiveemo_count != 0:
+                    emo_num_dict[MANUAL_EQUNUM] += 1
+                data_id_dict[type].append(dataset[i][ARRAYID['docid']])
+            else:
+                temp_num = []
+                temp_id = []
+                for one in data_list:
+                    temp_num.append(emo_num_dict[one])  # Guarantee order
+                    temp_id.append(data_id_dict[one])
+                manual_emo_list.append(temp_num)
+                data_id_list.append(temp_id)
+                day_list.append(str(second_date)[0:4] + str(second_date)[5:7] + str(second_date)[8:10])
+                # Init the dict of data numbers。
+                emo_num_dict = {}
+                data_id_dict = {}
+                for each in data_list:
+                    emo_num_dict[each] = 0
+                    data_id_dict[each] = []
+                first_date = second_date
+                second_date = second_date + dt
+                #print(second_date, "--------", dt)
+                if i < len(dataset) and first_date <= now_date <= second_date:
+                    i -= 1
+
+    return day_list, manual_emo_list, data_id_list
+
 # Data display preservation
 def saveToTxt(text, filename):
     with open(filename, 'a+', encoding='utf-8') as f:
@@ -144,7 +209,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
         dt = datetime.timedelta(days=TIME_INTERVAL)
         time_dict = {}
         # Emotion analysis
-        emo_num_dict = {ZEROEQUNUM:0, EQUNUM:0, POSNUM:0, NEGNUM:0}
+        emo_num_dict = {ZEROEQUNUM:0, MANUAL_EQUNUM:0, MANUAL_POSNUM:0, MANUAL_NEGNUM:0}
         emo_dict = {ZEROEQU: {}, EQU:{}, POS:{}, NEG:{}}
 
         # data loop
@@ -190,11 +255,11 @@ def conditionAnalysis(dataset, nkey_array, mode):
                 positiveemo_count = dataset[i][ARRAYID['positiveemo_count']]
                 # Result counts
                 if negativeemo_count > positiveemo_count:
-                    emo_num_dict[NEGNUM] += 1
+                    emo_num_dict[MANUAL_NEGNUM] += 1
                 elif negativeemo_count < positiveemo_count:
-                    emo_num_dict[POSNUM] += 1
+                    emo_num_dict[MANUAL_POSNUM] += 1
                 elif negativeemo_count == positiveemo_count and positiveemo_count != 0:
-                    emo_num_dict[EQUNUM] += 1
+                    emo_num_dict[MANUAL_EQUNUM] += 1
                 elif negativeemo_count == positiveemo_count and positiveemo_count == 0:
                     emo_num_dict[ZEROEQUNUM] += 1
 
