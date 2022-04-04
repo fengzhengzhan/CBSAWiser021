@@ -63,6 +63,7 @@ EMO_SAMPLE_FILENAME = "sample_key.pkl"
 EMO_ONEKEYJPG = "onekey_emotion.jpg"
 
 EMO_MANUAL_JPG = "manual_emotion.jpg"
+EMO_VIS_MANUAL_PATH = ANALYSIS_PATH + os.sep + file_time + EMO_MANUAL_JPG
 
 # Analysis by time
 TIME_MODE = "time_mode"

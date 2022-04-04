@@ -58,6 +58,11 @@ def mainAnalysis():
     else:
         print('[{}] {} -> Not recommended! It takes too long ...'.format(TIME(), EMOSTR))
 
+    # Manual Emotion
+    manual_emo_list = [MANUAL_POSNUM, MANUAL_NEGNUM, MANUAL_EQUNUM]
+    manual_emo_day_list, manual_time_emo_list, manual_emoid_list = Emotion.timeEmotionCountAnalysis(dataset, manual_emo_list, KEY_TIME_INTERVAL)
+    Keywords.visTimeData(manual_emo_day_list, manual_time_emo_list, manual_emo_list, "Manual Emotion Total", EMO_VIS_MANUAL_PATH)
+
     # 4. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
     gain_keywords = ["中國", "口罩", "經濟"]
