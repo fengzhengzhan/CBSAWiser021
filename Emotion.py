@@ -66,20 +66,34 @@ def statisticalEmotions(dataset, analysis_emotion_filename, ret_res=False):
 
             map_emotion = multiprocessing.Manager().dict()
             senti = Sentiment()
-            process_list = []
+            # process_list = []
+            # for i in range(cpu_cnt):
+            #     print("{} / {}".format(each_datalen * i, each_datalen * (i + 1)))
+            #     if i == cpu_cnt - 1:
+            #         p = multiprocessing.Process(target=thread_analysis,
+            #                                     args=(dataset[each_datalen * i:], senti, map_emotion,))  # Instantiating process objects
+            #     else:
+            #         p = multiprocessing.Process(target=thread_analysis,
+            #                                     args=(dataset[each_datalen * i:each_datalen * (i + 1)], senti, map_emotion,))  # Instantiating process objects
+            #     p.daemon = True
+            #     p.start()
+            #     process_list.append(p)
+            # for one in process_list:
+            #     one.join()
+
+            pool = multiprocessing.Pool(processes=cpu_cnt)
             for i in range(cpu_cnt):
                 print("{} / {}".format(each_datalen * i, each_datalen * (i + 1)))
                 if i == cpu_cnt - 1:
-                    p = multiprocessing.Process(target=thread_analysis,
-                                                args=(dataset[each_datalen * i:], senti, map_emotion,))  # 实例化进程对象
+                    pool.apply_async(thread_analysis,
+                                                (dataset[each_datalen * i:], senti, map_emotion,))  # Instantiating process objects
                 else:
-                    p = multiprocessing.Process(target=thread_analysis,
-                                                args=(dataset[each_datalen * i:each_datalen * (i + 1)], senti, map_emotion,))  # 实例化进程对象
-                p.daemon = True
-                p.start()
-                process_list.append(p)
-            for one in process_list:
-                one.join()
+                    pool.apply_async(thread_analysis,
+                                                (dataset[each_datalen * i:each_datalen * (i + 1)], senti, map_emotion,))  # Instantiating process objects
+
+            pool.close()
+            pool.join()
+
             map_emotion = dict(map_emotion)
         else:
             print('[{}] This is the first time for emotion analysis(#->1000) ...'.format(TIME()))
