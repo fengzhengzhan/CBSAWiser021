@@ -143,11 +143,13 @@ def timeEmotionCountAnalysis(dataset, data_list, day_interval):
                 # Result counts
                 if positiveemo_count > negativeemo_count:
                     emo_num_dict[MANUAL_POSNUM] += 1
+                    data_id_dict[MANUAL_POSNUM].append(dataset[i][ARRAYID['docid']])
                 elif positiveemo_count < negativeemo_count:
                     emo_num_dict[MANUAL_NEGNUM] += 1
+                    data_id_dict[MANUAL_NEGNUM].append(dataset[i][ARRAYID['docid']])
                 elif positiveemo_count == negativeemo_count and positiveemo_count != 0:
                     emo_num_dict[MANUAL_EQUNUM] += 1
-                data_id_dict[type].append(dataset[i][ARRAYID['docid']])
+                    data_id_dict[MANUAL_EQUNUM].append(dataset[i][ARRAYID['docid']])
             else:
                 temp_num = []
                 temp_id = []
