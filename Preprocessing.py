@@ -20,14 +20,17 @@ def excelToPickle(filename=DATA_FILENAME, save_filename=DATA_SAVE_FILENAME):
         print('[{}] This is the first read, file conversion in progress (3min) ...'.format(TIME()))
         xlsx = xlrd.open_workbook(filename)  # Open the workbook, the first time of reading the file takes ard 2 mins
         temp_array = []
+        before_datetime = None
         for sh in xlsx.sheets():  # Traversing data to save to an array
             for r in range(sh.nrows):
                 temp_data = sh.row_values(r)
                 try:
                     # Convert time to datetime format
                     temp_data[ARRAYID['pubdate']] = xlrd.xldate.xldate_as_datetime(temp_data[ARRAYID['pubdate']], 0)
+                    before_datetime = temp_data[ARRAYID['pubdate']]
                 except Exception as e:
-                    pass
+                    # origin:pass todo test
+                    temp_data[ARRAYID['pubdate']] = before_datetime
                 temp_array.append(temp_data)
 
         with open(save_filename, 'wb') as file:  # Save data as pkl Increase speed on further processing
