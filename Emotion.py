@@ -2,6 +2,7 @@
 import datetime
 import pickle
 import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
 import threading
 from cnsenti import Sentiment
 from snownlp import SnowNLP
@@ -27,33 +28,42 @@ def emotionAnalysis(one_data, senti):
     #     temp_dict[one_data[ARRAYID['docid']]] = score
     return temp_dict
 
-class KeyThread(threading.Thread):
-    def __init__(self, func, args):
-        super(KeyThread, self).__init__()
-        self.func = func
-        self.args = args
-
-    def run(self):
-        self.result = self.func(*self.args)
-
-    def get_result(self):
-        try:
-            return self.result
-        except Exception as e:
-            return None
+# class KeyThread(threading.Thread):
+#     def __init__(self, func, args):
+#         super(KeyThread, self).__init__()
+#         self.func = func
+#         self.args = args
+#
+#     def run(self):
+#         self.result = self.func(*self.args)
+#
+#     def get_result(self):
+#         try:
+#             return self.result
+#         except Exception as e:
+#             return None
 
 def thread_analysis(split_dataset, senti, map_emotion):
+    # thread_list = []
+    # for each in split_dataset:
+    #     t = KeyThread(emotionAnalysis, args=(each, senti,))
+    #     t.setDaemon(True)
+    #     t.start()
+    #     thread_list.append(t)
+    # for one in thread_list:
+    #     one.join()
+    #     result = one.get_result()
+    #     for k, v in result.items():
+    #         map_emotion[k] = v
+
+    threadPool = ThreadPoolExecutor(max_workers=THREAD_NUM)
     thread_list = []
     for each in split_dataset:
-        t = KeyThread(emotionAnalysis, args=(each, senti,))
-        t.setDaemon(True)
-        t.start()
-        thread_list.append(t)
-    for one in thread_list:
-        one.join()
-        result = one.get_result()
+        future = threadPool.submit(emotionAnalysis, each, senti)
+        result = future.result()
         for k, v in result.items():
             map_emotion[k] = v
+    threadPool.shutdown(wait=True)
 
 
 def statisticalEmotions(dataset, analysis_emotion_filename, ret_res=False):
@@ -85,12 +95,9 @@ def statisticalEmotions(dataset, analysis_emotion_filename, ret_res=False):
             for i in range(cpu_cnt):
                 print("{} / {}".format(each_datalen * i, each_datalen * (i + 1)))
                 if i == cpu_cnt - 1:
-                    pool.apply_async(thread_analysis,
-                                                (dataset[each_datalen * i:], senti, map_emotion,))  # Instantiating process objects
+                    pool.apply_async(thread_analysis, (dataset[each_datalen * i:], senti, map_emotion,))  # Instantiating process objects
                 else:
-                    pool.apply_async(thread_analysis,
-                                                (dataset[each_datalen * i:each_datalen * (i + 1)], senti, map_emotion,))  # Instantiating process objects
-
+                    pool.apply_async(thread_analysis, (dataset[each_datalen * i:each_datalen * (i + 1)], senti, map_emotion,))  # Instantiating process objects
             pool.close()
             pool.join()
 
