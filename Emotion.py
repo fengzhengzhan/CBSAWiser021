@@ -180,7 +180,7 @@ def timeEmotionCountAnalysis(dataset, data_list, day_interval):
                 manual_emo_list.append(temp_num)
                 data_id_list.append(temp_id)
                 day_list.append(str(second_date)[0:4] + str(second_date)[5:7] + str(second_date)[8:10])
-                # Init the dict of data numbers。
+                # Init the dict of data numbers.
                 emo_num_dict = {}
                 data_id_dict = {}
                 for each in data_list:
