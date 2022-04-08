@@ -26,7 +26,7 @@ def selectsort(content):
     return content
 
 def Mapping():
-    filename = "中國.xlsx"
+    filename = "口罩.xlsx"
     # 判断后缀，并将excel转换为csv
     if os.path.splitext(filename)[-1] == ".xlsx" or os.path.splitext(filename)[-1] == ".xls":
         xlsx_to_csv(filename)

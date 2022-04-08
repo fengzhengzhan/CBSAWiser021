@@ -256,7 +256,7 @@ def conditionAnalysis(dataset, nkey_array, mode):
                             else:
                                 time_dict[nkword] = 1
                             if nkword in INTERESTING_WORDS:
-                                tt = str('keyward: '+str(nkword)+"\n"
+                                tt = str('keyword: '+str(nkword)+"\n"
                                          +now_date.strftime("%Y-%m-%d-%H:%M:%S")+"\n"
                                          +'positiveemo_count: '+str(dataset[i][ARRAYID['positiveemo_count']])+"\n"
                                          +'negativeemo_count: '+str(dataset[i][ARRAYID['negativeemo_count']])+"\n"

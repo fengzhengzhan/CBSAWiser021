@@ -41,7 +41,7 @@ KEY_ANALUSIS_MODE = TFIDF  # TFIDF  TEXTRANK
 KEY_NKEY = 3  # the number of keywords to be extracted
 KEY_CLOUDNUM = 50  # Number of words drawn by the word cloud.
 KEY_CLOUD_PATH = ANALYSIS_PATH + os.sep + file_time + "wordcloud.png"
-KEY_TIME_INTERVAL = 1  # Discourse author analysis interval.
+KEY_TIME_INTERVAL = 14  # Discourse author analysis interval.
 KEY_AUTHORJPG = "authortime.jpg"
 KEY_VIS_AUTHOR_PATH = ANALYSIS_PATH + os.sep + file_time + KEY_AUTHORJPG
 KEY_PUBLISHERJPG = "publishertime.jpg"
@@ -56,7 +56,7 @@ with open(DATA_PATH + os.sep + "StopWords.txt", 'r', encoding="utf-8") as f:
 '''Emotion'''
 EMOSTR = "3 Emotion"
 EMO_FILENAME = ANALYSIS_PATH + os.sep + "emotion_dict.pkl"
-INTERESTING_WORDS = ['醫護']  # extract content related to respective keywords  (\\ represent null)
+INTERESTING_WORDS = ['']  # extract content related to respective keywords  (\\ represent null)
 INTERESTING_CONTENT_FILENAME = ANALYSIS_PATH + os.sep + file_time + "content_analysis.txt"
 INTERESTING_TEXT = ""
 
