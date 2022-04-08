@@ -25,8 +25,12 @@ def selectsort(content):
         content[i], content[minIdx] = content[minIdx], content[i]
     return content
 
+<<<<<<< HEAD
 def Mapping():
     filename = "口罩.xlsx"
+=======
+def Mapping(filename):
+>>>>>>> 453dbb73f4be2fa714b65212732140f755374de7
     # 判断后缀，并将excel转换为csv
     if os.path.splitext(filename)[-1] == ".xlsx" or os.path.splitext(filename)[-1] == ".xls":
         xlsx_to_csv(filename)
@@ -86,6 +90,7 @@ def Mapping():
     return day_list, y_data
 
 if __name__ == "__main__":
-    day_list, y_data = Mapping()
+    filename = "中國.xlsx"
+    day_list, y_data = Mapping(filename)
     print(day_list)
     print(y_data)
