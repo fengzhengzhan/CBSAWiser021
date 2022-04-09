@@ -65,7 +65,7 @@ def mainAnalysis():
 
     # 4. Customized Keywords
     print('[{}] {} -> Extracting custom keywords ...'.format(TIME(), CUSSTR))
-    gain_keywords = ["中國", "口罩", "經濟"]
+    gain_keywords = ["旅游", "失業", "離境","確診"]
     onekey_daylist = []
     onekey_timelist = None
     # one keyword numbers
@@ -77,7 +77,7 @@ def mainAnalysis():
         custom_dataset, map_correlate = Customized.customRelated(dataset, map_dataset, map_nkey, onekey)
         map_correlate.pop(onekey)
         cusone_author_day_list, cusone_time_author_list, cusone_time_authorid_list = Keywords.timeDataAnalysis(custom_dataset, author_list, ARRAYID['author_type'], KEY_TIME_INTERVAL)
-        Keywords.visTimeData(cusone_author_day_list, cusone_time_author_list, author_list, "Author:"+onekey, folderpath + os.sep + KEY_AUTHORJPG)
+        #Keywords.visTimeData(cusone_author_day_list, cusone_time_author_list, author_list, "Author:"+onekey, folderpath + os.sep + KEY_AUTHORJPG)
 
         # publisher
         cusone_publisher_day_list, cusone_time_publisher_list, cusone_time_publisherid_list = Keywords.timeDataAnalysis(custom_dataset, publisher_list, ARRAYID['pubname'], KEY_TIME_INTERVAL)

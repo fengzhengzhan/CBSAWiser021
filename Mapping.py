@@ -3,7 +3,7 @@ import os
 import xlrd
 import csv
 
-KEY_TIME_INTERVAL = 7
+KEY_TIME_INTERVAL = 1
 
 
 def xlsx_to_csv(filename):
@@ -25,12 +25,11 @@ def selectsort(content):
         content[i], content[minIdx] = content[minIdx], content[i]
     return content
 
-<<<<<<< HEAD
+
 def Mapping():
-    filename = "口罩.xlsx"
-=======
+    filename = "departure_total.xlsx"
+
 def Mapping(filename):
->>>>>>> 453dbb73f4be2fa714b65212732140f755374de7
     # 判断后缀，并将excel转换为csv
     if os.path.splitext(filename)[-1] == ".xlsx" or os.path.splitext(filename)[-1] == ".xls":
         xlsx_to_csv(filename)
@@ -72,7 +71,7 @@ def Mapping(filename):
                 second_date = datetime.datetime.strptime(temp_date, "%Y-%m-%d") + dt
                 # print(first_date, second_date)
             # Determine time range
-            if idx < len(content) and first_date <= now_date <= second_date:
+            if idx < len(content) and first_date <= now_date < second_date:
                 nums += content[idx][1]
             else:
                 day_list.append(str(second_date)[0:4] + str(second_date)[5:7] + str(second_date)[8:10])
@@ -90,7 +89,7 @@ def Mapping(filename):
     return day_list, y_data
 
 if __name__ == "__main__":
-    filename = "中國.xlsx"
+    filename = "arrival_total2.xlsx"
     day_list, y_data = Mapping(filename)
     print(day_list)
     print(y_data)
