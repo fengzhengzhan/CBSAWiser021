@@ -40,3 +40,22 @@ CBSA-Wizers Analytics Chanllenge: Third Place.
 3. The grid searches for ratios between multiple factors and selects the ratio with the greatest accuracy as the coefficient between predictors.
 
 `Arrivals = -33.180 + 0.292*HongKong_infections + 4.683*Mainland_infections + 0.210*Asian_infections - 0.904*European_American_infections + 0.016*Vaccination - 0.009*policy`
+
+## Project Experience
+```
+CBSA-Wiser Analytics Challenge 2022 : Look for potential links between the number of arrivals and social media talk factors and try to predict the fit to past data.
+1. collaborative multi-person development using git team.
+2. Python language to manipulate data files, and data cleaning, sorting and integration of data by time interval according to social media posting time.
+3. using multi-process scheduling multi-threaded parallelism to speed up the analysis of the sentiment analysis module cnsenti.
+4. Use polynomial regression single factor by accuracy to analyze social media factors related to the number of influential arrivals.
+5. Use model fitting and grid search to predict the proportion of correlation between factors.
+```
+
+```
+CBSA-Wiser Analytics Challenge 2022 : 寻找入境人数与社交媒体谈论因素之间的潜在联系，并尝试预测拟合过往数据。
+1. 使用git团队多人协同开发。
+2. Python语言操作数据文件，并进行数据清洗，按照社交媒体发布时间按时间间隔对数据进行排序和整合。
+3. 使用多进程调度多线程并行加快情感分析模块cnsenti分析速度。
+4. 使用多项式回归单因素按准确率分析影响入境人数相关的社交媒体因素。
+5. 使用模型拟合和网格化搜索预测各因素之间的相关比例。
+```
