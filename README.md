@@ -27,11 +27,16 @@
 5. If you don't want to wait two hours and don't need to set additional parameters, copy analysis_nkey_array.pkl to the analysis folder.
 6. Running the file directly will generate the corresponding analysis files under the analysis folder.
 7. The analysis files are analysis of time, analysis of comment sentiment, and extraction of content of interest.
-8. You can set the words of interest
-9. Time analysis interval
+8. More accurate keyword extraction, and high frequency keyword.
+9. Graph of keyword sources and temporal changes in the number of comments by camp.
+10. Output different data information according to different keywords and save it as .csv.
 
-## Update Function
+## Finals
 
-1. More accurate keyword extraction, and high frequency keyword.
-2. Graph of keyword sources and temporal changes in the number of comments by camp.
-3. Emotion
+CBSA-Wizers Analytics Chanllenge: Third Place.
+
+1. Data cleaning: Processing the data given by the final.
+2. Determining key influences on the accuracy of curve fitting using polynomial regression.
+3. The grid searches for ratios between multiple factors and selects the ratio with the greatest accuracy as the coefficient between predictors.
+
+`Arrivals = -33.180 + 0.292*HongKong_infections + 4.683*Mainland_infections + 0.210*Asian_infections - 0.904*European_American_infections + 0.016*Vaccination - 0.009*policy`
